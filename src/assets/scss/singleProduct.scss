@@ -1,0 +1,334 @@
+// Single Product Component Styles with Responsive Breakpoints
+
+// Breakpoints
+$mobile: 576px;
+$tablet: 768px;
+$desktop: 992px;
+$large-desktop: 1200px;
+
+// Single Product Container
+.single-product {
+  
+  // Main Image Section
+  &__image-section {
+    
+    .main-image {
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      
+      @media (max-width: $tablet) {
+        max-width: 100%;
+        height: 300px;
+      }
+      
+      @media (max-width: $mobile) {
+        max-width: 100%;
+        height: 250px;
+      }
+    }
+    
+    // Thumbnail Gallery
+    .thumbnail-gallery {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+      
+      @media (max-width: $mobile) {
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      
+      .thumbnail-item {
+        cursor: pointer;
+        border: 2px solid transparent;
+        border-radius: 4px;
+        padding: 2px;
+        transition: border-color 0.3s ease;
+        
+        &.active {
+          border-color: #1890ff;
+        }
+        
+        .thumbnail-image {
+          object-fit: cover;
+          border-radius: 4px;
+          width: 60px;
+          height: 60px;
+          
+          @media (max-width: $mobile) {
+            width: 45px;
+            height: 45px;
+          }
+        }
+      }
+    }
+  }
+  
+  // Product Details Section
+  &__details {
+    padding: 0 16px;
+    
+    @media (max-width: $tablet) {
+      padding: 16px 0;
+    }
+    
+    // Product Title
+    .product-title {
+      margin-bottom: 8px;
+      
+      @media (max-width: $mobile) {
+        font-size: 20px !important;
+      }
+    }
+    
+    // Tags Section
+    .product-tags {
+      margin-bottom: 16px;
+      
+      @media (max-width: $mobile) {
+        .ant-space-item {
+          margin-bottom: 4px;
+        }
+      }
+    }
+    
+    // Price Section
+    .price-section {
+      margin-bottom: 16px;
+      
+      .current-price {
+        font-size: 24px;
+        font-weight: bold;
+        color: #52c41a;
+        
+        @media (max-width: $mobile) {
+          font-size: 20px;
+        }
+      }
+      
+      .original-price {
+        font-size: 18px;
+        color: #999;
+        margin-left: 8px;
+        
+        @media (max-width: $mobile) {
+          font-size: 16px;
+          margin-left: 4px;
+        }
+      }
+      
+      .discount-tag {
+        margin-left: 8px;
+        
+        @media (max-width: $mobile) {
+          margin-left: 4px;
+        }
+      }
+      
+      .price-note {
+        display: block;
+        margin-top: 4px;
+      }
+    }
+    
+    // Status Section
+    .status-section {
+      margin-bottom: 16px;
+    }
+    
+    // Variants Section
+    .variants-section {
+      margin-bottom: 16px;
+      
+      .variants-label {
+        display: block;
+        margin-bottom: 8px;
+      }
+      
+      .variant-tag {
+        cursor: pointer;
+        padding: 4px 8px;
+        border: 1px solid #d9d9d9;
+        transition: all 0.3s ease;
+        
+        &.active {
+          border: 2px solid #1890ff;
+        }
+        
+        @media (max-width: $mobile) {
+          margin-bottom: 4px;
+          font-size: 12px;
+          padding: 2px 6px;
+        }
+      }
+    }
+    
+    // Attributes Section
+    .attributes-section {
+      margin-bottom: 16px;
+      
+      .attributes-label {
+        display: block;
+        margin-bottom: 8px;
+      }
+      
+      .attribute-item {
+        padding: 8px 12px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        
+        @media (max-width: $mobile) {
+          padding: 6px 8px;
+          font-size: 12px;
+        }
+        
+        .attribute-name {
+          font-weight: 600;
+          color: #333;
+        }
+        
+        .attribute-value {
+          color: #666;
+        }
+      }
+    }
+    
+    // Description Section
+    .description-section {
+      margin-bottom: 24px;
+      
+      .description-label {
+        display: block;
+        margin-bottom: 8px;
+      }
+      
+      .description-content {
+        background-color: #fafafa;
+        padding: 16px;
+        border-radius: 6px;
+        border-left: 4px solid #1890ff;
+        
+        @media (max-width: $mobile) {
+          padding: 12px;
+        }
+      }
+    }
+    
+    // Action Buttons
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      
+      @media (max-width: $mobile) {
+        gap: 8px;
+        
+        .ant-btn {
+          flex: 1;
+          min-width: 120px;
+        }
+      }
+    }
+  }
+  
+  // Additional Info Section
+  &__additional-info {
+    margin-top: 24px;
+    
+    .info-card {
+      margin-bottom: 16px;
+      
+      .info-title {
+        margin-bottom: 12px;
+        color: #1890ff;
+      }
+      
+      .info-grid {
+        .info-item {
+          padding: 8px 12px;
+          background-color: #f9f9f9;
+          border-radius: 4px;
+          margin-bottom: 8px;
+          
+          @media (max-width: $mobile) {
+            padding: 6px 8px;
+          }
+          
+          .info-label {
+            font-weight: 600;
+            color: #333;
+            margin-right: 8px;
+          }
+          
+          .info-value {
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+  
+  // Loading State
+  &__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+  
+  // Error State
+  &__error {
+    text-align: center;
+    padding: 40px 20px;
+    
+    .error-icon {
+      font-size: 48px;
+      color: #ff4d4f;
+      margin-bottom: 16px;
+    }
+    
+    .error-message {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+  }
+}
+
+// Responsive Grid Adjustments
+@media (max-width: $tablet) {
+  .single-product {
+    .ant-row {
+      margin: 0;
+    }
+    
+    .ant-col {
+      padding: 8px;
+    }
+  }
+}
+
+@media (max-width: $mobile) {
+  .single-product {
+    .ant-card {
+      margin: 8px;
+    }
+    
+    .ant-typography h2 {
+      font-size: 18px;
+    }
+    
+    .ant-typography h3 {
+      font-size: 16px;
+    }
+    
+    .ant-space {
+      gap: 4px !important;
+    }
+  }
+}

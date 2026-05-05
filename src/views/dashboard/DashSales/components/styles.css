@@ -1,0 +1,153 @@
+/* Dashboard Styles - Ant Design Theme */
+:root {
+  --primary-color: #088B46;
+  --primary-light: #e6f7ef;
+  --primary-lighter: #baf7d7;
+  --text-dark: #333333;
+  --text-muted: #8c8c8c;
+  --border-color: #f0f0f0;
+  --card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+}
+
+/* General Card Styling - Ant Design */
+.ant-card {
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.ant-card:hover {
+  box-shadow: var(--card-shadow);
+}
+
+/* Override Ant Design default styles */
+.ant-card-head {
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+}
+
+.ant-card-body {
+  padding: 24px;
+}
+
+/* Stat Card - Ant Design */
+.stat-card .icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card .trend-indicator {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+/* Summary Card - Ant Design */
+.summary-card .metric-item {
+  padding: 12px;
+  text-align: center;
+}
+
+.summary-card .icon-box-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Chart Card - Ant Design */
+.chart-card .chart-container {
+  min-height: 300px;
+}
+
+.chart-card .chart-summary .summary-item {
+  padding: 8px;
+}
+
+/* Data Table - Ant Design */
+.ant-table-modern {
+  margin-bottom: 0;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ant-table-tbody > tr > td {
+  vertical-align: middle;
+}
+
+.data-table-card .table-modern tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Slider Component */
+.slider-card {
+  position: relative;
+}
+
+.slider-container {
+  overflow: hidden;
+}
+
+.slider-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.slider-item {
+  flex: 0 0 100%;
+}
+
+.slider-dots .slider-dot {
+  transition: background-color 0.3s ease;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #077a3d;
+  border-color: #077a3d;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Utility Classes */
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.border-primary {
+  border-color: var(--primary-color) !important;
+}
+
+.font-size-sm {
+  font-size: 0.875rem;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}

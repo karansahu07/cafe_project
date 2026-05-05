@@ -1,0 +1,289 @@
+// Default Style
+@import 'assets/scss/style';
+/* Fix the active and focus state */
+
+
+//sandeep
+// ul.pc-navbar .pc-link.active i,
+// ul.pc-navbar .pc-link:focus i {
+//     background-color: #088B46 !important; /* Ensure only active/focused icons get the color */
+// }
+
+
+
+/* Correct font weight and color */
+// ul.pc-navbar .pc-link.active span,
+// ul.pc-navbar .pc-link:focus span {
+//     color: white  !important;
+// }
+
+/* Ensure sidebar items are readable */
+.pc-sidebar .pc-caption span:not(.badge) {
+    color: white;
+}
+
+/* Fix active menu item styles */
+.pc-sidebar .pc-item.active > .pc-link,.pc-sidebar .pc-item.hover > .pc-link {
+    background-color: #088B46 !important;
+    color: white !important; /* Text should be visible */
+}
+
+
+
+/* Fix submenu background */
+.pc-sidebar .pc-item .pc-link {
+    background-color: transparent !important; /* Keep submenu clean */
+    color: #088B46 !important; /* Ensure text is visible */
+}
+
+
+//sandeep
+/* Fix submenu hover */
+.pc-sidebar .pc-item .pc-link:hover,  .pc-sidebar .pc-item .pc-link:active {
+    background-color: #088B46 !important;
+}
+.pc-sidebar .pc-item .pc-link:active .pc-arrow, .pc-sidebar .pc-item .pc-link:hover .pc-arrow,  .pc-arrow{
+    color: #fff !important;
+}
+.pc-sidebar .pc-submenu .pc-item:before {
+    // color: #088b46 !important;
+    display: none !important;
+}
+
+/* Fix submenu hover */
+
+/* Remove unnecessary arrows */
+.pc-sidebar .pc-item .pc-link::before {
+    content: ''; /* Remove extra arrow */
+}
+
+/* Fix submenu icon alignment */
+.pc-sidebar .pc-item .pc-link i {
+    margin-right: 8px; /* Add spacing between icon and text */
+}
+// li.pc-item.active .pc-link.active span {
+//     color: red !important;
+// }
+img.logo.logo-lg {
+    max-width: 10rem;
+}
+.pc-sidebar .m-header {
+    border-bottom: 1px solid white;
+}
+.page-header {
+    // top: 0;
+    // background: #088B46 !important;
+    // border: 2px solid #088B46;
+}
+.material-icons-two-tone.text-primary {
+    background-color: #088B46;
+}
+.bg-primary {
+    --bs-bg-opacity: 1;
+    background-color: #088B46 !important;
+}
+.pc-header .pc-head-link.active, .pc-header .pc-head-link:active, .pc-header .pc-head-link:focus, .pc-header .pc-head-link:hover {
+    text-decoration: none;
+    color: #088B46 !important;
+}
+.text-primary {
+    --bs-text-opacity: 1;
+    color: #088B46 !important;
+}
+.bg-light-primary {
+    color: #088B46 !important;
+}
+.auth-wrapper {
+    background: #088B46 !important;
+}
+.btn-primary {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: #088B46 !important;
+    --bs-btn-border-color: #088B46 !important;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: #088B46 !important;
+    --bs-btn-hover-border-color: #088B46 !important;
+    --bs-btn-focus-shadow-rgb: 135, 126, 241;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: #088B46 !important;
+    --bs-btn-active-border-color: #088B46 !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-disabled-bg: #088B46 !important;
+    --bs-btn-disabled-border-color: #088B46 !important;
+}
+.mineimg{
+    max-width: 50% !important;
+}
+.pc-sidebar .pc-micon i {
+    background-color: #088b46 !important;
+}
+.pc-item{
+    border-bottom: 1px solid #088b46 !important;
+}
+.pc-header{
+    top: 0;
+}
+//sandeep
+// ul.pc-navbar .pc-link.active i, ul.pc-navbar .pc-link:focus i {
+//     background-color: white !important;
+// }
+
+
+// .pc-sidebar .pc-item .pc-link:hover, .pc-sidebar .pc-item .pc-link:active, .pc-sidebar .pc-item .pc-link:focus {
+//     background-color: #088B46 !important;
+// }
+// .pc-item .pc-link:hover .pc-mtext, .pc-sidebar .pc-item .pc-link:active .pc-mtext, .pc-sidebar .pc-item .pc-link:focus .pc-mtext{
+//     color: red !important;
+// }
+.pc-item.active .pc-submenu pc-link.active, .pc-item.active .pc-submenu pc-link.focus, .pc-item.active .pc-submenu pc-link.hover{
+    background-color: #ff0606 !important;
+}
+.pc-link:hover .pc-mtext {
+    color: white !important;
+    transition: .3s;
+}
+.pc-link:hover .pc-micon i {
+    background-color: white !important;
+    transition: .3s;
+}
+.pc-link.active .pc-micon i {
+    background-color: white !important;
+    transition: .3s;
+}
+
+// .pc-item.active .pc-submenu .pc-link.active .pc-mtext{
+//     color: #088B46 !important;
+// }
+.pc-item.active .pc-submenu .pc-link.active, .pc-item.active .pc-submenu .pc-link.hover, .pc-item.active .pc-submenu .pc-link.focus {
+    background: #088B46 !important;
+}
+.pc-item.active .pc-submenu .pc-link.active .pc-mtext, .pc-item.active .pc-submenu .pc-link.hover .pc-mtext, .pc-item.active .pc-submenu .pc-link.focus .pc-mtext{
+    color: white !important;
+}
+.pc-item.active .pc-submenu .pc-link.active .pc-micon i, .pc-item.active .pc-submenu .pc-link.focus .pc-micon i, .pc-item.active .pc-submenu .pc-link.hover .pc-micon i{
+    background-color: #ffffff !important;
+}
+
+.pc-item  .pc-link.active{
+    background-color: #088B46 !important;
+    color: #fff !important;
+}
+
+.custom-toggle {
+    border: 1px solid #ccc;
+    color: #333;
+    background-color: white;
+  }
+  
+  .custom-toggle.active-green {
+    background-color: #088B46 !important; 
+    color: white !important;
+  }
+  
+//   .custom-toggle.active-blue {
+//     background-color: #088B46 !important; 
+//     color: white !important;
+//   }
+  
+  .form-control:focus {
+    color: #5b6b79;
+    background-color: #ffffff;
+    border-color:#088B46;
+    outline: 0;
+    box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0.2);
+}
+
+
+
+.container-p0{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.custom-row-small {
+  min-height: 28px !important;
+  max-height: 28px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+/* Blur background for Ant Design Image Preview */
+.ant-image-preview-mask {
+    background: rgba(133, 131, 131, 0.637) !important; /* Semi-transparent background */
+    backdrop-filter: blur(8px); /* Blur intensity */
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
+  }
+
+  .ant-image-preview-operations{
+    background-color: black !important;
+  }
+
+@media (min-width: 576px) {
+    .p2 {
+      padding: 1.5rem; /* Adjust the value as needed */
+    }
+
+
+    #previewHost .ant-image-preview-wrap {
+        position: absolute ;
+        inset: 0 ;            /* top/right/bottom/left = 0 */
+      //   top: 10px;
+      }
+
+  }
+
+.ant-select-clear .anticon svg {
+  width: 1.4em !important;
+  height: 1.4em !important;
+}
+
+
+
+
+
+
+
+  /* 2) fixed ko absolute/inset:0 me badal do taaki parent follow ho */
+// #previewHost .ant-image-preview-root,
+// #previewHost .ant-image-preview-wrap {
+//   position: absolute ;
+//   inset: 0 ;            /* top/right/bottom/left = 0 */
+// //   top: 10px;
+// }
+
+#previewHost .ant-image-preview-root-hidden {
+    display: none !important; /* close hone ke baad forcefully remove dikhai de */
+  }
+  #previewHost .ant-image-preview-root[aria-hidden="true"],
+#previewHost .ant-image-preview-wrap[aria-hidden="true"] {
+  display: none !important;
+}
+/* Preview container ko parent ke andar fit karao */
+#previewHost .ant-image-preview {
+  inset: 0 ;
+  padding: 0 ;
+}
+
+// /* Blur background just inside the parent area */
+#previewHost .ant-image-preview-mask {
+  background: rgba(226, 222, 222, 0.801) ;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+// /* Toolbar positioning thoda trim */
+#previewHost .ant-image-preview-operations {
+  top: 8px;
+  right: 8px;
+}
+
+/* Optional: scrollbar hide/clip jitna parent allow kare */
+#previewHost .ant-image-preview-body {
+  overflow: hidden;
+}
+
+.ant-image-preview-close{
+    top:100px ;
+    background-color: rgba(0, 0, 0, 0.747);
+}

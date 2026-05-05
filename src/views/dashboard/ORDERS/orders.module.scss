@@ -1,0 +1,92 @@
+// Orders module styles
+
+.ordersContainer {
+  padding: 1.5rem;
+
+  h2 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.filtersContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.filterItem {
+  min-width: 180px;
+  // flex: 1;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.dateRangeContainer {
+  margin-top: 1rem;
+  // margin-bottom: 1rem;
+  
+  @media (min-width: 768px) {
+    margin-top: 0;
+  }
+}
+
+.statusSelect {
+  min-width: 150px;
+  
+  :global {
+    .ant-select-selector {
+      border-radius: 4px;
+    }
+    
+    .ant-select-selection-item {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.sheetActions {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.statusTag {
+  &.pending {
+    background-color: #faad14;
+    color: #fff;
+  }
+  
+  &.confirmed {
+    background-color: #1890ff;
+    color: #fff;
+  }
+  
+  &.assigned {
+    background-color: #722ed1;
+    color: #fff;
+  }
+  
+  &.pickedUp {
+    background-color: #13c2c2;
+    color: #fff;
+  }
+  
+  &.delivered {
+    background-color: #52c41a;
+    color: #fff;
+  }
+  
+  &.rejected {
+    background-color: #f5222d;
+    color: #fff;
+  }
+}
