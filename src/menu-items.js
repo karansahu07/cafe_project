@@ -371,6 +371,21 @@ const menuItems = {
         }
       ]
     },
+    {
+      id: 'create-store-group',
+      type: 'group',
+      icon: 'icon-support',
+      children: [
+        {
+          id: 'create-store',
+          title: 'Create Store',
+          type: 'item',
+          icon: 'material-icons-two-tone',
+          iconname: 'storefront',
+          url: '/create-store/step-1'
+        }
+      ]
+    }
     // Manage Categories Data
     // {
     //   id: 'category-div-data',

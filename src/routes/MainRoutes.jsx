@@ -52,6 +52,12 @@ const Editcategorydata = lazy(() => import('../views/editCategory/editCategory')
 const AddAppBanner = lazy(() => import('../views/homeApp-banner/addappbanner'));
 const AllAppBanner = lazy(() => import('../views/homeApp-banner/allappbanner'));
 const Unverifiedusers = lazy(() => import('../views/users/unverifiedusers'));
+const CreateStoreStep1 = lazy(() => import('../views/create-store/Step1BasicVendorSignup'));
+const CreateStoreStep2 = lazy(() => import('../views/create-store/Step2StoreBasicDetails'));
+const CreateStoreStep3 = lazy(() => import('../views/create-store/Step3BusinessDetails'));
+const CreateStoreStep4 = lazy(() => import('../views/create-store/Step4AdditionalCertificates'));
+const CreateStoreStep5 = lazy(() => import('../views/create-store/Step5BankDetails'));
+const CreateStoreReview = lazy(() => import('../views/create-store/ApplicationReview'));
 
 const MainRoutes = {
   path: '/',
@@ -205,6 +211,30 @@ const MainRoutes = {
         {
           path: '/riders/:id',
           element: <SingleRider/>
+        },
+        {
+          path: '/create-store/step-1',
+          element: <CreateStoreStep1 />
+        },
+        {
+          path: '/create-store/step-2',
+          element: <CreateStoreStep2 />
+        },
+        {
+          path: '/create-store/step-3',
+          element: <CreateStoreStep3 />
+        },
+        {
+          path: '/create-store/step-4',
+          element: <CreateStoreStep4 />
+        },
+        {
+          path: '/create-store/step-5',
+          element: <CreateStoreStep5 />
+        },
+        {
+          path: '/application-review',
+          element: <CreateStoreReview />
         }
       ]
     },

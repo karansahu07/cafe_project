@@ -163,6 +163,22 @@ const menuItems = {
           iconname: 'storefront'
         }
       ]
+    },
+    {
+      id: 'create-store-group',
+      title: 'Create Store',
+      type: 'group',
+      icon: 'icon-support',
+      children: [
+        {
+          id: 'create-store',
+          title: 'Create Store',
+          type: 'item',
+          url: '/create-store/step-1',
+          icon: 'material-icons-two-tone',
+          iconname: 'storefront'
+        }
+      ]
     }
   ]
 };
