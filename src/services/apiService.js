@@ -21,6 +21,25 @@ const configwithform = {
     },
 };
 
+const getVendorAuthHeaders = () => {
+  const vendorToken = localStorage.getItem("vendor_ini_token") || localStorage.getItem("user_token");
+  return vendorToken ? { Authorization: `Bearer ${vendorToken}` } : {};
+};
+
+const getVendorJsonConfig = () => ({
+  headers: {
+    ...getVendorAuthHeaders(),
+    "Content-Type": "application/json",
+  },
+});
+
+const getVendorFormConfig = () => ({
+  headers: {
+    ...getVendorAuthHeaders(),
+    "Content-Type": "multipart/form-data",
+  },
+});
+
 // ✅ Axios instance for cleaner API calls
 // const axios = axios.create({
 //     baseURL: API_URL,
@@ -467,6 +486,15 @@ export const getAllVendorTypes = async () => {
   }
 };
 
+export const getVendorTypesForSignup = async () => {
+  try {
+    const response = await axios.get(`/vendors/type`, getVendorJsonConfig());
+    return { success: true, data: response.data.data || [] };
+  } catch (error) {
+    return { success: false, error: error.response?.data || error.message };
+  }
+};
+
 export const updateVendorType = async (id, formData) => {
   try {
     const response = await axios.put(`/vendors/type/${id}`, formData, configwithform);
@@ -529,6 +557,52 @@ export const updateRiderStatus = async (riderId, newStatus) => {
      config
       
     );
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.response?.data || error.message };
+  }
+};
+
+// Create Store - Vendor signup flow
+export const vendorSignup = async (payload) => {
+  try {
+    const response = await axios.post(`/vendors/vendor-signup`, payload, getVendorJsonConfig());
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.response?.data || error.message };
+  }
+};
+
+export const vendorVerification = async (formData) => {
+  try {
+    const response = await axios.post(`/vendors/vendor-verification`, formData, getVendorFormConfig());
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.response?.data || error.message };
+  }
+};
+
+export const storeBusinessDetails = async (formData) => {
+  try {
+    const response = await axios.post(`/vendors/store-bussinessdetails`, formData, getVendorFormConfig());
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.response?.data || error.message };
+  }
+};
+
+export const storeAdditionalDetails = async (formData) => {
+  try {
+    const response = await axios.post(`/vendors/store-additionaldetails`, formData, getVendorFormConfig());
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.response?.data || error.message };
+  }
+};
+
+export const addBankDetails = async (formData) => {
+  try {
+    const response = await axios.post(`/users/addbankdetails`, formData, getVendorFormConfig());
     return { success: true, data: response.data };
   } catch (error) {
     return { success: false, error: error.response?.data || error.message };

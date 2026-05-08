@@ -139,7 +139,8 @@ const getGroupTitle = (groupId) => {
     'orders-group': 'Order Management',
     'vendor-group': 'Vendor Management',
     'rider-group': 'Rider Management',
-    'category-div-data': 'Category Data'
+    'category-div-data': 'Category Data',
+    'create-store-group': 'Create Store'
   };
   return groupTitles[groupId] || 'Menu';
 };
