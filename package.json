@@ -11,6 +11,7 @@
     "bootstrap": "5.3.3",
     "browser-image-compression": "^2.0.2",
     "feather-icons-react": "^0.7.0",
+    "firebase": "^12.13.0",
     "jwt-decode": "^4.0.0",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.525.0",

@@ -4,6 +4,7 @@ import { getAllCategories, getAllSubCategoriesbyID, productfetchBrands, addProdu
 import { has } from "lodash-es";
 import { priceParsed } from "../../../services/utils/gen_utility";
 import { useWatch } from "antd/es/form/Form";
+import { getResolvedRoleId, getResolvedVendorId } from "../../../utils/authSession";
 // import { getAllCategories, getAllSubCategoriesbyID, productfetchBrands, addProduct } from "../../services/apiService";
 
 export default function useAddProductHook(form,data) {
@@ -27,6 +28,9 @@ export default function useAddProductHook(form,data) {
   const [newAddonDraft, setNewAddonDraft] = useState({ name: '', price: '' });
   const [selectedUnit, setSelectedUnit] = useState();
   const [discountPercent, setDiscountPercent] = useState(0);
+  const resolvedRoleId = getResolvedRoleId();
+  const isVendorUser = Number(resolvedRoleId) === 3;
+  const loggedInVendorId = getResolvedVendorId();
 
 
 
@@ -44,12 +48,26 @@ export default function useAddProductHook(form,data) {
     productfetchBrands().then((response) => {
       if (response.success) setBrands(response.data);
     });
+
+    if (isVendorUser) {
+      if (loggedInVendorId) {
+        setSelectedVendor(String(loggedInVendorId));
+        setVendors([
+          {
+            id: String(loggedInVendorId),
+            name: `Vendor #${loggedInVendorId}`
+          }
+        ]);
+      }
+      return;
+    }
+
     getAllVendors(true).then((response) => {
       if (response.success && Array.isArray(response.data)) {
         setVendors(response.data.map(v => ({ id: v.vendor_id, name: v.store_name })));
       }
     });
-  }, []);
+  }, [isVendorUser, loggedInVendorId]);
 
   // Fetch subcategories when category changes
   const handleCategoryChange = async (catId) => {
@@ -112,6 +130,10 @@ export default function useAddProductHook(form,data) {
   };
 
   const handleVendorChange = (value) => {
+    if (isVendorUser) {
+      setSelectedVendor(loggedInVendorId ? String(loggedInVendorId) : null);
+      return;
+    }
     setSelectedVendor(value);
   };
 
@@ -372,9 +394,12 @@ export default function useAddProductHook(form,data) {
   
       formData.append("fast_delivery_available", values.fast_delivery_available ? 1 : 0);
   
-      if (selectedVendor) {
-        formData.append("vendor_id", selectedVendor);
+      const effectiveVendorId = isVendorUser ? loggedInVendorId : selectedVendor;
+      if (!effectiveVendorId) {
+        message.error("Vendor not resolved. Please login again.");
+        return;
       }
+      formData.append("vendor_id", String(effectiveVendorId));
   
       // Featured Image
       const productImage = values.product_image?.[0]?.originFileObj;
@@ -504,7 +529,9 @@ export default function useAddProductHook(form,data) {
     selectedUnit, setSelectedUnit,
     enableDiscount,
     price,
-    discountPrice
+    discountPrice,
+    isVendorUser,
+    loggedInVendorId
   };
 } 
 

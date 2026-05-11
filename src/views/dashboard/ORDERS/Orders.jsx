@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Table, Alert, Space, Button,Tag } from 'antd';
 import dayjs from 'dayjs';
+import { useParams } from 'react-router-dom';
 import useOrder, { getOrderStatus } from './hooks/useOrder';
 import useVendors from './hooks/useVendors';
 import SingleOrder from './SingleOrder';
@@ -9,7 +10,34 @@ import OrderFilters from './OrderFilters';
 import useDebounce from '../../../hooks/useDebounce';
 import styles from './orders.module.scss';
 
+const getCustomerName = (record) => {
+  const first = record?.user?.firstname || record?.user?.first_name || record?.firstname || '';
+  const last = record?.user?.lastname || record?.user?.last_name || record?.lastname || '';
+  const full = `${first} ${last}`.trim();
+  return full || record?.user?.name || record?.user?.username || record?.name || '-';
+};
+
+const getCustomerPhone = (record) => {
+  return record?.user?.phonenumber || record?.user?.phone || record?.phonenumber || record?.phone || '-';
+};
+
+const getCustomerEmail = (record) => {
+  return record?.user?.email || record?.email || '-';
+};
+
+const getCustomerAddress = (record) => {
+  const addressObj = record?.address || {};
+  const address = addressObj?.address || '';
+  const floor = addressObj?.floor || '';
+  const landmark = addressObj?.landmark || '';
+  const line = [address, floor, landmark].filter(Boolean).join(', ');
+  return line || '-';
+};
+
+const getCreatedAtValue = (record) => record?.order_created_at || record?.created_at || null;
+
 const Orders = () => {
+  const { orderId } = useParams();
   const {
     orders,
     total,
@@ -27,6 +55,7 @@ const Orders = () => {
     setVendorId,
     setStatus,
     setDateRange,
+    isVendorScoped,
   } = useOrder();
   const { vendors, loading: vendorsLoading } = useVendors();
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -38,6 +67,13 @@ const Orders = () => {
   React.useEffect(() => {
     setSearch(debouncedSearch);
   }, [debouncedSearch, setSearch]);
+
+  React.useEffect(() => {
+    if (!orderId) return;
+    const query = String(orderId);
+    setSearchInput(query);
+    setSearch(query);
+  }, [orderId, setSearch]);
   
   
 
@@ -48,16 +84,31 @@ const Orders = () => {
       key: 'order_id',
     },
     {
-      title: 'User',
-      dataIndex: ['user', 'custom_id'],
-      key: 'user',
-      render: (_, record) => record.user?.custom_id || '-',
+      title: 'Customer Name',
+      key: 'customer_name',
+      render: (_, record) => getCustomerName(record),
+    },
+    {
+      title: 'Customer Phone',
+      key: 'customer_phone',
+      render: (_, record) => getCustomerPhone(record),
+    },
+    {
+      title: 'Customer Email',
+      key: 'customer_email',
+      render: (_, record) => getCustomerEmail(record),
+    },
+    {
+      title: 'Customer Address',
+      key: 'customer_address',
+      width: 260,
+      render: (_, record) => getCustomerAddress(record),
     },
     {
       title: 'Vendor',
       dataIndex: ['vendor', 'store_name'],
       key: 'vendor',
-      render: (_, record) => record.vendor?.store_name || '-',
+      render: (_, record) => record.vendor?.store_name || record?.store_name || '-',
     },
     {
       title: 'Total Qty',
@@ -85,9 +136,17 @@ const Orders = () => {
     },
     {
       title: 'Created At',
-      dataIndex: 'created_at',
       key: 'created_at',
-      render: (text) => text ? new Date(text).toLocaleString() : '-',
+      render: (_, record) => {
+        const value = getCreatedAtValue(record);
+        return value ? new Date(value).toLocaleString() : '-';
+      },
+      sorter: (a, b) => {
+        const aTime = new Date(getCreatedAtValue(a) || 0).getTime();
+        const bTime = new Date(getCreatedAtValue(b) || 0).getTime();
+        return aTime - bTime;
+      },
+      defaultSortOrder: 'descend',
     },
     {
       title: 'Action',
@@ -121,6 +180,7 @@ const Orders = () => {
         onDateRangeChange={setDateRange}
         vendors={vendors}
         vendorsLoading={vendorsLoading}
+        hideVendorFilter={isVendorScoped}
       />
       {error && <Alert type="error" message="Error loading orders" description={error.message || String(error)} showIcon style={{ marginBottom: 16 }} />}
       <Table

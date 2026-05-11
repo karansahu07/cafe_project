@@ -74,8 +74,10 @@ import {
 import { ConfigContext } from 'contexts/ConfigContext';
 import useWindowSize from 'hooks/useWindowSize';
 import navigation from 'menu-items';
+import { getMenuItemsByRole } from 'menu-items';
 import navitemcollapse from 'menu-items-collapse';
 import * as actionType from 'store/actions';
+import { getResolvedRoleId } from '../../../utils/authSession';
 // assets
 import avatar2 from 'assets/images/user/avatar-2.svg';
 
@@ -93,6 +95,9 @@ const iconMap = {
   storefront: <ShopOutlined />,
   apartment: <ShopOutlined />,
   two_wheeler: <CarOutlined />,
+  list_alt: <FileTextOutlined />,
+  notifications: <BellOutlined />,
+  account_circle: <UserOutlined />,
   default: <AppstoreOutlined />
 };
 
@@ -154,6 +159,8 @@ export default function ModernNavigation() {
   const { dispatch } = configContext;
   const location = useLocation();
   const navigate = useNavigate();
+  const roleId = getResolvedRoleId();
+  const currentNavigation = getMenuItemsByRole(roleId);
   
   const [selectedKeys, setSelectedKeys] = useState(['dashboard']);
   const [openKeys, setOpenKeys] = useState([]);
@@ -189,7 +196,7 @@ export default function ModernNavigation() {
       return null;
     };
 
-    const result = findCurrentItemAndParent(navigation.items, location.pathname);
+    const result = findCurrentItemAndParent(currentNavigation.items, location.pathname);
     if (result) {
       setSelectedKeys([result.currentKey]);
       // Keep parent menu open if item is inside a collapse menu
@@ -197,14 +204,14 @@ export default function ModernNavigation() {
         setOpenKeys(prev => [...new Set([...prev, result.parentKey])]);
       }
     }
-  }, [location.pathname]);
+  }, [currentNavigation, location.pathname]);
 
   const navToggleHandler = () => {
     dispatch({ type: actionType.COLLAPSE_MENU });
   };
 
   const handleMenuClick = (e) => {
-    const item = findMenuItem(navigation.items, e.key);
+    const item = findMenuItem(currentNavigation.items, e.key);
     if (item && item.url) {
       // navigate(item.url); // Use React Router navigation
     }
@@ -225,9 +232,12 @@ export default function ModernNavigation() {
   const siderWidth = isMobile ? '80vw' : (collapseMenu ? 80 : 280);
 
   // On mobile, always show full menu; on desktop, respect collapseLayout
+  const shouldUseCollapseLayoutMenu = collapseLayout && Number(roleId) !== 3;
+  const desktopMenuSource = shouldUseCollapseLayoutMenu ? navitemcollapse.items : currentNavigation.items;
+
   const menuItems = isMobile
-    ? convertMenuItems(navigation.items)
-    : convertMenuItems(collapseLayout ? navitemcollapse.items : navigation.items);
+    ? convertMenuItems(currentNavigation.items)
+    : convertMenuItems(desktopMenuSource);
 
   return (
     <>

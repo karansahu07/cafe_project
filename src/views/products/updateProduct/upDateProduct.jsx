@@ -10,7 +10,7 @@ import ProductVariants from "../components/ProductVariants";
 // import InputWithSuggestions from "./components/InputWithSuggestions";
 import { unitOptions, quantityOptions } from "../components/options";
 import Addons from "../components/Addons";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 // import useUpdateProduct from "./hooks/useUpdateProduct";
 import { formatPrice } from "../../../services/utils/gen_utility";
 import "../../../assets/scss/pages/uploder_override.scss"
@@ -28,12 +28,16 @@ const UpdateProduct = () => {
 
 
 
-  const { id } = useParams(); // ✅ even better
+  const { id } = useParams();
+  const location = useLocation();
+  const queryId = new URLSearchParams(location.search).get('id');
+  const resolvedProductId = id || queryId;
  const [productdata, setProductdata] = useState(null);
      useEffect(() => {
       const fetchProduct = async () => {
-        console.log("id",id)
-        const response = await getProductById(id);
+        if (!resolvedProductId) return;
+        console.log("id",resolvedProductId)
+        const response = await getProductById(resolvedProductId);
         console.log("response",response)
         if (response.success) {
           const product = response.product;
@@ -42,7 +46,7 @@ const UpdateProduct = () => {
         }
       };
       fetchProduct();
-     },[id])
+     },[resolvedProductId])
 
 
 
@@ -102,7 +106,9 @@ const UpdateProduct = () => {
     selectedUnit,
     setSelectedUnit,
     normFile,
-    handleUnitChange, validateFileUpload,uploadProps,discountPercent, setDiscountPercent,checkvarient
+    handleUnitChange, validateFileUpload,uploadProps,discountPercent, setDiscountPercent,checkvarient,
+    isVendorUser,
+    loggedInVendorId
   } = useUpdateProduct(form,productdata);
 
   // Add common unit options
@@ -212,30 +218,35 @@ const UpdateProduct = () => {
             >
               <Row gutter={16}>
                 <Col md={24} xs={24}>
-                  <Form.Item
-                    label="Vendor"
-                    required
-                    name={"vendor"}
-                    disabled
-                  >
-                    <Select
-                      placeholder="Select Vendor"
-                      value={selectedVendor}
-                      onChange={handleVendorChange}
-                      allowClear
-                      showSearch
-                      optionFilterProp="children"
-                      onClear={() => handleVendorChange(null)}
-                      filterOption={(input, option) =>
-                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                      }
-                      style={{ width: '100%' }}
+                  {isVendorUser ? (
+                    <Form.Item label="Vendor" required name={"vendor"}>
+                      <Input value={loggedInVendorId ? `Vendor #${loggedInVendorId}` : 'Vendor not resolved'} disabled />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      label="Vendor"
+                      required
+                      name={"vendor"}
                     >
-                      {vendors.map((vendor) => (
-                        <Option key={vendor.id} value={vendor.id}>{vendor.name}</Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
+                      <Select
+                        placeholder="Select Vendor"
+                        value={selectedVendor}
+                        onChange={handleVendorChange}
+                        allowClear
+                        showSearch
+                        optionFilterProp="children"
+                        onClear={() => handleVendorChange(null)}
+                        filterOption={(input, option) =>
+                          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
+                        style={{ width: '100%' }}
+                      >
+                        {vendors.map((vendor) => (
+                          <Option key={vendor.id} value={vendor.id}>{vendor.name}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  )}
                 </Col>
                 <Col md={6} xs={24}>
                   <Form.Item

@@ -2,6 +2,7 @@ import { lazy } from 'react';
 
 import AdminLayout from 'layouts/AdminLayout';
 import GuestLayout from 'layouts/GuestLayout';
+import RoleBasedDashboard from '../components/RoleBasedDashboard';
 
 //lazy import components
 const DashSales2 = lazy(() => import('../views/dashboard/DashSales/index2'));
@@ -58,6 +59,14 @@ const CreateStoreStep3 = lazy(() => import('../views/create-store/Step3BusinessD
 const CreateStoreStep4 = lazy(() => import('../views/create-store/Step4AdditionalCertificates'));
 const CreateStoreStep5 = lazy(() => import('../views/create-store/Step5BankDetails'));
 const CreateStoreReview = lazy(() => import('../views/create-store/ApplicationReview'));
+const StoreHome = lazy(() => import('../views/store/home'));
+const StoreNotifications = lazy(() => import('../views/store/notifications'));
+const StoreMyAccount = lazy(() => import('../views/store/myAccount'));
+const EditAccount = lazy(() => import('../views/store/account/EditAccount'));
+const ChangePassword = lazy(() => import('../views/store/account/ChangePassword'));
+const ShopProfile = lazy(() => import('../views/store/account/ShopProfile'));
+const ShopStatus = lazy(() => import('../views/store/account/ShopStatus'));
+const BankInfo = lazy(() => import('../views/store/account/BankInfo'));
 
 const MainRoutes = {
   path: '/',
@@ -68,7 +77,11 @@ const MainRoutes = {
       children: [
         {
           path: '/dashboard',
-          element: <DashboardSales />
+          element: <RoleBasedDashboard><DashboardSales /></RoleBasedDashboard>
+        },
+        {
+          path: '/new-home',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><StoreHome /></ProtectedRoute>
         },
         {
           path: '/dashboard2',
@@ -123,13 +136,65 @@ const MainRoutes = {
           element: <AddProducts />
         },
         {
+          path: '/add-products',
+          element: <AddProducts />
+        },
+        {
+          path: '/new-product',
+          element: <AddProducts />
+        },
+        {
           path: '/products/update/:id',
+          element: <UpdateProduct />
+        },
+        {
+          path: '/update-product',
           element: <UpdateProduct />
         },
 
         {
           path: '/products',
           element: <AllProducts />
+        },
+        {
+          path: '/all-products',
+          element: <AllProducts />
+        },
+        {
+          path: '/store/notifications',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><StoreNotifications /></ProtectedRoute>
+        },
+        {
+          path: '/store/my-account',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><StoreMyAccount /></ProtectedRoute>
+        },
+        {
+          path: '/my-account',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><StoreMyAccount /></ProtectedRoute>
+        },
+        {
+          path: '/edit-account',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><EditAccount /></ProtectedRoute>
+        },
+        {
+          path: '/changepassword',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><ChangePassword /></ProtectedRoute>
+        },
+        {
+          path: '/change-password',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><ChangePassword /></ProtectedRoute>
+        },
+        {
+          path: '/shopprofile',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><ShopProfile /></ProtectedRoute>
+        },
+        {
+          path: '/shopstatus',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><ShopStatus /></ProtectedRoute>
+        },
+        {
+          path: '/bankinfo',
+          element: <ProtectedRoute allowedRoles={["vendor"]}><BankInfo /></ProtectedRoute>
         },
         {
           path: '/products/:id',        // 👈 Yeh pehle likha hai
@@ -177,6 +242,10 @@ const MainRoutes = {
         },
         {
           path: '/all-orders',
+          element: <Orders />
+        },
+        {
+          path: '/orders/:orderId',
           element: <Orders />
         },                                                                                                                                                                                                        
         {

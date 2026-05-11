@@ -20,6 +20,7 @@ const OrderFilters = ({
   onDateRangeChange,
   vendors,
   vendorsLoading,
+  hideVendorFilter = false,
 }) => {
   const screens = useBreakpoint()
   const isMobile = !!screens.xs && !screens.md
@@ -34,7 +35,9 @@ const OrderFilters = ({
 
   const applyFilters = () => {
     onSearchInputChange?.(tempFilters.searchInput)
-    onVendorChange?.(tempFilters.vendorId || '')
+    if (!hideVendorFilter) {
+      onVendorChange?.(tempFilters.vendorId || '')
+    }
     onStatusChange?.(tempFilters.status)
     onDateRangeChange?.(tempFilters.dateRange)
     setFilterDrawerOpen(false)
@@ -49,7 +52,7 @@ const OrderFilters = ({
     }
     setTempFilters({
       searchInput: '',
-      vendorId: '',
+      vendorId: hideVendorFilter ? (vendorId || '') : '',
       status: null,
       dateRange: defaultDateRange,
     })
@@ -67,24 +70,26 @@ const OrderFilters = ({
             allowClear
           />
         </div>
-        <div className={styles.filterItem}>
-          <Select
-            showSearch
-            allowClear
-            loading={vendorsLoading}
-            placeholder="Filter by Vendor"
-            value={vendorId || undefined}
-            onChange={val => onVendorChange?.(val || '')}
-            optionFilterProp="children"
-            style={{ minWidth: 200 }}
-          >
-            {vendors.map(vendor => (
-              <Select.Option key={vendor.id} value={vendor.id}>
-                {vendor.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
+        {!hideVendorFilter ? (
+          <div className={styles.filterItem}>
+            <Select
+              showSearch
+              allowClear
+              loading={vendorsLoading}
+              placeholder="Filter by Vendor"
+              value={vendorId || undefined}
+              onChange={val => onVendorChange?.(val || '')}
+              optionFilterProp="children"
+              style={{ minWidth: 200 }}
+            >
+              {vendors.map(vendor => (
+                <Select.Option key={vendor.id} value={vendor.id}>
+                  {vendor.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+        ) : null}
         <div className={styles.filterItem}>
           <Select
             allowClear
@@ -154,25 +159,27 @@ const OrderFilters = ({
           />
         </div>
 
-        <div className={styles.sheetFilterItem}>
-          <label>Vendor</label>
-          <Select
-            showSearch
-            allowClear
-            loading={vendorsLoading}
-            placeholder="Filter by Vendor"
-            value={tempFilters.vendorId || undefined}
-            onChange={val => setTempFilters({ ...tempFilters, vendorId: val || '' })}
-            style={{ width: '100%' }}
-            optionFilterProp="children"
-          >
-            {vendors.map(vendor => (
-              <Select.Option key={vendor.id} value={vendor.id}>
-                {vendor.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
+        {!hideVendorFilter ? (
+          <div className={styles.sheetFilterItem}>
+            <label>Vendor</label>
+            <Select
+              showSearch
+              allowClear
+              loading={vendorsLoading}
+              placeholder="Filter by Vendor"
+              value={tempFilters.vendorId || undefined}
+              onChange={val => setTempFilters({ ...tempFilters, vendorId: val || '' })}
+              style={{ width: '100%' }}
+              optionFilterProp="children"
+            >
+              {vendors.map(vendor => (
+                <Select.Option key={vendor.id} value={vendor.id}>
+                  {vendor.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+        ) : null}
 
         <div className={styles.sheetFilterItem}>
           <label>Status</label>

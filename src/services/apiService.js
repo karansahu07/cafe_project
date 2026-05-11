@@ -81,15 +81,27 @@ export const getAllSubCategories = async (catID) => {
         return { success: false, error: error.response?.data || "Something went wrong" };
     }
 };
-export const getAllProducts = async () => {
-    try {
-        const response = await axios.post("/products/getproducts", {},config);
+export const getAllProducts = async (options = {}) => {
+  try {
+    const vendorId = options?.vendorId;
 
-        return { success: true, data: response.data?.products || [] };
-    } catch (error) {
-        console.error("Failed to fetch products:", error);
-        return { success: false, error: error.response?.data || "Something went wrong" };
+    if (vendorId) {
+      const response = await axios.post(
+        "/products/getallproductsbyvendorID",
+        { vendor_id: vendorId },
+        config
+      );
+
+      return { success: true, data: response.data?.product || response.data?.products || [] };
     }
+
+    const response = await axios.post("/products/getproducts", {},config);
+
+    return { success: true, data: response.data?.products || [] };
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+    return { success: false, error: error.response?.data || "Something went wrong" };
+  }
 };
 
 
