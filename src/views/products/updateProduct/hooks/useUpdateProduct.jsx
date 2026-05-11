@@ -4,6 +4,7 @@ import { getAllCategories, getAllSubCategoriesbyID, productfetchBrands, addProdu
 import { normalizeAttributes, priceParsed } from "../../../../services/utils/gen_utility";
 import axios from "axios";
 import { useWatch } from "antd/es/form/Form";
+import { getResolvedRoleId, getResolvedVendorId } from "../../../../utils/authSession";
 // import { getAllCategories, getAllSubCategoriesbyID, productfetchBrands, addProduct } from "../../services/apiService";
 
 export default function useUpdateProduct(form,data) {
@@ -27,6 +28,9 @@ export default function useUpdateProduct(form,data) {
   const [newAddonDraft, setNewAddonDraft] = useState({ name: '', price: '' });
   const [selectedUnit, setSelectedUnit] = useState();
   const [discountPercent, setDiscountPercent] = useState(0);
+  const resolvedRoleId = getResolvedRoleId();
+  const isVendorUser = Number(resolvedRoleId) === 3;
+  const loggedInVendorId = getResolvedVendorId();
 
   const [productImage, setProductImage] = useState([]);
 
@@ -99,7 +103,7 @@ export default function useUpdateProduct(form,data) {
             sub_category: data?.sub_category,
           
             product_brand: data?.brand_id,
-            vendor: data?.vendor_id,
+            vendor: isVendorUser ? loggedInVendorId : data?.vendor_id,
           
             product_image: data?.product_image,
           
@@ -113,6 +117,8 @@ export default function useUpdateProduct(form,data) {
               value: item.attribute_value ?? item.value
             })),
           });
+
+          setSelectedVendor(String(isVendorUser ? loggedInVendorId : data?.vendor_id || ''));
           
           setSelectedUnit(data?.product_unit);
 
@@ -132,7 +138,7 @@ export default function useUpdateProduct(form,data) {
           setGalleryImages(data?.gallery_images);
           setGalleryPreviews(data?.gallery_images.map(img => img.image_path));
   }
- },[data])
+ },[data, form, isVendorUser, loggedInVendorId])
 
 
 
@@ -145,12 +151,25 @@ export default function useUpdateProduct(form,data) {
       if (response.success) setBrands(response.data);
      
     });
+    if (isVendorUser) {
+      if (loggedInVendorId) {
+        setSelectedVendor(String(loggedInVendorId));
+        setVendors([
+          {
+            id: String(loggedInVendorId),
+            name: `Vendor #${loggedInVendorId}`
+          }
+        ]);
+      }
+      return;
+    }
+
     getAllVendors(true).then((response) => {
       if (response.success && Array.isArray(response.data)) {
         setVendors(response.data.map(v => ({ id: v.vendor_id, name: v.store_name })));
       }
     });
-  }, []);
+  }, [isVendorUser, loggedInVendorId]);
 
   // Fetch subcategories when category changes
   const handleCategoryChange = async (catId,refresh=true) => {
@@ -227,6 +246,10 @@ export default function useUpdateProduct(form,data) {
 };
 
   const handleVendorChange = (value) => {
+    if (isVendorUser) {
+      setSelectedVendor(loggedInVendorId ? String(loggedInVendorId) : null);
+      return;
+    }
     setSelectedVendor(value);
   };
 
@@ -495,9 +518,12 @@ export default function useUpdateProduct(form,data) {
 
      
       formData.append("fast_delivery_available", values.fast_delivery_available ? 1 : 0);
-      // if (selectedVendor) {
-      //   // formData.append("vendor_id", selectedVendor);
-      // }
+      const effectiveVendorId = isVendorUser ? loggedInVendorId : selectedVendor;
+      if (!effectiveVendorId) {
+        message.error("Vendor not resolved. Please login again.");
+        return;
+      }
+      formData.append("vendor_id", String(effectiveVendorId));
       // Product Image
       console.log("productImage",productImage )
       if (productImage && productImage[0]?.originFileObj) {
@@ -631,7 +657,9 @@ export default function useUpdateProduct(form,data) {
     normFile,
     handleUnitChange, validateFileUpload,uploadProps,
     discountPercent, setDiscountPercent,
-    checkvarient:()=>{hasVariants||hasAddOns}
+    checkvarient:()=>{hasVariants||hasAddOns},
+    isVendorUser,
+    loggedInVendorId
 
   };
 } 

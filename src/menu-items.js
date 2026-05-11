@@ -1,4 +1,4 @@
-const menuItems = {
+const adminMenuItems = {
   items: [
     // Navigation Group
     {
@@ -405,4 +405,107 @@ const menuItems = {
   ]
 };
 
-export default menuItems;
+const storeAdminMenuItems = {
+  items: [
+    {
+      id: 'store-admin-group',
+      type: 'group',
+      icon: 'icon-navigation',
+      children: [
+        {
+          id: 'store-home',
+          title: 'Home',
+          type: 'item',
+          icon: 'material-icons-two-tone',
+          iconname: 'home',
+          url: '/new-home'
+        },
+        {
+          id: 'store-manage-category',
+          title: 'Category',
+          type: 'collapse',
+          icon: 'material-icons-two-tone',
+          iconname: 'history_edu',
+          children: [
+            {
+              id: 'store-add-category',
+              title: 'Add Category',
+              type: 'item',
+              url: '/add-category',
+              classes: 'nav-item',
+              icon: 'material-icons-two-tone',
+              iconname: 'person_add'
+            },
+            {
+              id: 'store-all-category',
+              title: 'All Category',
+              type: 'item',
+              url: '/all-category',
+              classes: 'nav-item',
+              icon: 'material-icons-two-tone',
+              iconname: 'people_alt'
+            }
+          ]
+        },
+        {
+          id: 'store-manage-products',
+          title: 'Product',
+          type: 'collapse',
+          icon: 'material-icons-two-tone',
+          iconname: 'add_shopping_cart',
+          children: [
+            {
+              id: 'store-add-products',
+              title: 'Add Products',
+              type: 'item',
+              url: '/add-products',
+              classes: 'nav-item',
+              icon: 'material-icons-two-tone',
+              iconname: 'person_add'
+            },
+            {
+              id: 'store-all-products',
+              title: 'All Products',
+              type: 'item',
+              url: '/products',
+              classes: 'nav-item',
+              icon: 'material-icons-two-tone',
+              iconname: 'people_alt'
+            }
+          ]
+        },
+        {
+          id: 'store-orders',
+          title: 'Orders',
+          type: 'item',
+          icon: 'material-icons-two-tone',
+          iconname: 'list_alt',
+          url: '/all-orders'
+        },
+        {
+          id: 'store-notifications',
+          title: 'Notifications',
+          type: 'item',
+          icon: 'material-icons-two-tone',
+          iconname: 'notifications',
+          url: '/store/notifications'
+        },
+        {
+          id: 'store-my-account',
+          title: 'My Account',
+          type: 'item',
+          icon: 'material-icons-two-tone',
+          iconname: 'account_circle',
+          url: '/store/my-account'
+        }
+      ]
+    }
+  ]
+};
+
+export const getMenuItemsByRole = (roleId) => {
+  return Number(roleId) === 3 ? storeAdminMenuItems : adminMenuItems;
+};
+
+export { adminMenuItems, storeAdminMenuItems };
+export default adminMenuItems;

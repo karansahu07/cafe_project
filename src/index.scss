@@ -287,3 +287,16 @@ img.logo.logo-lg {
     top:100px ;
     background-color: rgba(0, 0, 0, 0.747);
 }
+
+.notification-item {
+    white-space: normal;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.notification-item:last-child {
+    border-bottom: 0;
+}
+
+.notification-item .text-muted {
+    font-size: 12px;
+}

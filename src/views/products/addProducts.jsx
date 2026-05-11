@@ -66,7 +66,9 @@ const ProductRegistration = ({ data }) => {
     handleUnitChange,
     enableDiscount,
     price,
-    discountPrice
+    discountPrice,
+    isVendorUser,
+    loggedInVendorId
   } = useAddProductHook(form, data);   
 
   // Cropper state (3:2 aspect) for product & gallery images
@@ -191,25 +193,31 @@ const ProductRegistration = ({ data }) => {
             <Form form={form} layout="vertical" onFinish={handleFinish} autoComplete="off">
               <Row gutter={16}>
                 <Col md={24} xs={24}>
-                  <Form.Item label="Vendor" required>
-                    <Select
-                      placeholder="Select Vendor"
-                      value={selectedVendor}
-                      onChange={handleVendorChange}
-                      allowClear
-                      showSearch
-                      optionFilterProp="children"
-                      onClear={() => handleVendorChange(null)}
-                      filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                      style={{ width: '100%' }}
-                    >
-                      {vendors.map((vendor) => (
-                        <Option key={vendor.id} value={vendor.id}>
-                          {vendor.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
+                  {isVendorUser ? (
+                    <Form.Item label="Vendor" required>
+                      <Input value={loggedInVendorId ? `Vendor #${loggedInVendorId}` : 'Vendor not resolved'} disabled />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item label="Vendor" required>
+                      <Select
+                        placeholder="Select Vendor"
+                        value={selectedVendor}
+                        onChange={handleVendorChange}
+                        allowClear
+                        showSearch
+                        optionFilterProp="children"
+                        onClear={() => handleVendorChange(null)}
+                        filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                        style={{ width: '100%' }}
+                      >
+                        {vendors.map((vendor) => (
+                          <Option key={vendor.id} value={vendor.id}>
+                            {vendor.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  )}
                 </Col>
                 <Col md={6} xs={24}>
                   <Form.Item

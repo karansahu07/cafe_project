@@ -119,3 +119,57 @@ Please generate a [GitHub issue](https://github.com/codedthemes/dashboardkit-fre
 - Twitter [https://twitter.com/codedthemes](https://twitter.com/codedthemes)
 "# go-green-admin-panel" 
 "# z_cafe_frontend" 
+
+## Firebase Cloud Messaging (Vendor Notifications)
+
+### 1. Environment Variables
+
+Add these variables in your `.env` file:
+
+```env
+FIREBASE_API_KEY=your_api_key
+FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+FIREBASE_APP_ID=your_app_id
+FIREBASE_VAPID_KEY=your_web_push_vapid_key
+VITE_API_URL=https://zcafe.ekarigar.com
+```
+
+Note:
+- `vite.config.mjs` is configured with `envPrefix: ['VITE_', 'FIREBASE_']`, so `FIREBASE_*` keys are available in frontend code.
+
+### 2. Install and Run
+
+```bash
+npm install
+npm start
+```
+
+Open dashboard on `localhost` or HTTPS domain.
+
+### 3. How It Works
+
+- Service worker file: `public/firebase-messaging-sw.js`
+- Foreground + token lifecycle hook: `src/hooks/useVendorNotifications.js`
+- Firebase helpers: `src/services/firebase/firebaseMessaging.js`
+- UI bell dropdown: `src/layouts/AdminLayout/NavBar/NavRight/index.jsx`
+
+### 4. Test Checklist
+
+1. Login as vendor.
+2. Click `Enable Notifications` if browser asks permission.
+3. Check backend token save (`POST /userfcm-token`) is called.
+4. Create customer order from customer app/backend trigger.
+5. Foreground dashboard should show in-app notification + unread badge.
+6. Keep tab hidden/background, then trigger order again.
+7. Browser push should appear from service worker.
+8. Logout should call token remove (`DELETE /remove-fcmtoken`).
+
+### 5. Troubleshooting
+
+- If permission is denied: enable notifications in browser site settings and retry.
+- If token generation fails: use retry button from notifications dropdown.
+- Ensure `FIREBASE_VAPID_KEY` is correct Web Push certificate key.
+- Ensure backend accepts bearer token for `/userfcm-token` and `/remove-fcmtoken`.

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAllProducts, getAllCategories, getAllSubCategories, productfetchBrands, deleteProduct } from '../../../services/apiService';
 import axios from 'axios';
 import orderBy from 'lodash/orderBy';
+import { getResolvedRoleId, getResolvedVendorId } from '../../../utils/authSession';
 
 export default function useProductTable() {
   // Filters
@@ -41,6 +42,9 @@ export default function useProductTable() {
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
+  const roleId = getResolvedRoleId();
+  const isVendorUser = Number(roleId) === 3;
+  const vendorId = getResolvedVendorId();
 
   // Fetch categories, brands, subcategories on mount
   useEffect(() => {
@@ -70,12 +74,18 @@ export default function useProductTable() {
     setError(null);
     try {
       const response = await getAllProducts({
+        vendorId: isVendorUser ? vendorId : undefined,
         page: params.pagination?.current || pagination.current,
         pageSize: params.pagination?.pageSize || pagination.pageSize,
         sortField: params.sorter?.field,
         sortOrder: params.sorter?.order,
       });
       let products = response.success ? (response.data.products || response.data) : [];
+
+      // Extra safety: if vendor user, keep only own store products on client too.
+      if (isVendorUser && vendorId) {
+        products = products.filter((p) => String(p.vendor_id) === String(vendorId));
+      }
       // --- FILTERING (frontend) ---
       if (filters.name) {
         products = products.filter(p => p.name?.toLowerCase().includes(filters.name.toLowerCase()));
@@ -109,7 +119,7 @@ export default function useProductTable() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.current, pagination.pageSize, filters]);
+  }, [pagination.current, pagination.pageSize, filters, isVendorUser, vendorId]);
 
   useEffect(() => {
     fetchData({ pagination, sorter });
