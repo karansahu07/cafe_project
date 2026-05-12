@@ -105,7 +105,7 @@ export const productTableColumns = (BASE_URL, handleUpdate, handleDelete, pagina
     title: 'Featured',
     dataIndex: 'is_featured',
     render: (val, record) => (
-      <Switch checked={val === 1}  style={{ backgroundColor: val === 1 ? '#088B46' : undefined }} onChange={(checked) => handleToggleFeatured(record.id, checked ? 1 : 0)} />
+      <Switch checked={val === 1}  style={{ backgroundColor: val === 1 ? '#961818' : undefined }} onChange={(checked) => handleToggleFeatured(record.id, checked ? 1 : 0)} />
     ),
     sorter: true,
     width: 100,
@@ -114,7 +114,7 @@ export const productTableColumns = (BASE_URL, handleUpdate, handleDelete, pagina
     title: 'Today Deal',
     dataIndex: 'is_today_deal',
     render: (val, record) => (
-      <Switch checked={val === 1}  style={{ backgroundColor: val === 1 ? '#088B46' : undefined }} onChange={(checked) => handleToggleTodayDeal(record.id, checked ? 1 : 0)} />
+      <Switch checked={val === 1}  style={{ backgroundColor: val === 1 ? '#961818' : undefined }} onChange={(checked) => handleToggleTodayDeal(record.id, checked ? 1 : 0)} />
     ),
     sorter: true,
     width: 110,

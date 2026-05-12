@@ -7,7 +7,7 @@ import { Card, Row, Col, Button, InputGroup, Form } from 'react-bootstrap';
 import FeatherIcon from 'feather-icons-react';
 
 // assets
-import logoDark from 'assets/images/logo1.svg';
+import logoDark from 'assets/images/logo.svg';
 
 // -----------------------|| SignUp 1 ||-----------------------//
 

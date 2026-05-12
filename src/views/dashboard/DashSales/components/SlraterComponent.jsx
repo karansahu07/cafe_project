@@ -10,7 +10,7 @@ import { Download, RefreshCw, TrendingUp, DollarSign, UserPlus, Heart, Users, Th
 const SlraterComponent = () => {
   // Admin Home Stats Cards
   const stats = [
-    { id: 'totalOrders', label: 'Total Orders', subtitle: 'Today / This Month', primary: '268 / 5,432', growth: '+6.2%', trend: 'up', icon: 'trending-up', color: '#088B46' },
+    { id: 'totalOrders', label: 'Total Orders', subtitle: 'Today / This Month', primary: '268 / 5,432', growth: '+6.2%', trend: 'up', icon: 'trending-up', color: '#961818' },
     { id: 'revenue', label: 'Total Revenue', subtitle: 'Today / This Month', primary: '$12,430 / $187,540', growth: '+12.4%', trend: 'up', icon: 'briefcase', color: '#36BFFA', extra: 'Admin Commission: $18,754' },
     { id: 'activeVendors', label: 'Active Vendors', subtitle: 'Live / New this month', primary: '142 / 18', growth: '+3.1%', trend: 'up', icon: 'users', color: '#FB8832' },
     { id: 'activeRiders', label: 'Active Riders', subtitle: 'Online now', primary: '78', growth: '+9 online', trend: 'up', icon: 'user-plus', color: '#7C3AED', extra: 'Deliveries today: 426 | On-time: 92%' },
@@ -35,7 +35,7 @@ const SlraterComponent = () => {
       },
       background: 'transparent'
     },
-    colors: ['#088B46', '#36BFFA', '#FB8832'],
+    colors: ['#961818', '#36BFFA', '#FB8832'],
     dataLabels: {
       enabled: false
     },
@@ -221,7 +221,7 @@ const SlraterComponent = () => {
                   padding: '16px'
                 }}>
                   <h6 style={{ margin: '0 0 4px 0', color: '#8c8c8c', fontSize: '14px' }}>Overall Growth</h6>
-                  <h3 style={{ margin: 0, color: '#088B46', fontSize: '24px', fontWeight: '600' }}>+15.8%</h3>
+                  <h3 style={{ margin: 0, color: '#961818', fontSize: '24px', fontWeight: '600' }}>+15.8%</h3>
                   <p style={{ margin: '4px 0 0 0', color: '#8c8c8c', fontSize: '12px' }}>Compared to previous quarter</p>
                 </div>
               </Col>
@@ -233,7 +233,7 @@ const SlraterComponent = () => {
                   padding: '16px'
                 }}>
                   <h6 style={{ margin: '0 0 4px 0', color: '#8c8c8c', fontSize: '14px' }}>Conversion Rate</h6>
-                  <h3 style={{ margin: 0, color: '#088B46', fontSize: '24px', fontWeight: '600' }}>8.5%</h3>
+                  <h3 style={{ margin: 0, color: '#961818', fontSize: '24px', fontWeight: '600' }}>8.5%</h3>
                   <p style={{ margin: '4px 0 0 0', color: '#8c8c8c', fontSize: '12px' }}>Industry avg: 5.8%</p>
                 </div>
               </Col>
@@ -244,7 +244,7 @@ const SlraterComponent = () => {
                   padding: '16px'
                 }}>
                   <h6 style={{ margin: '0 0 4px 0', color: '#8c8c8c', fontSize: '14px' }}>Customer LTV</h6>
-                  <h3 style={{ margin: 0, color: '#088B46', fontSize: '24px', fontWeight: '600' }}>$1,250</h3>
+                  <h3 style={{ margin: 0, color: '#961818', fontSize: '24px', fontWeight: '600' }}>$1,250</h3>
                   <p style={{ margin: '4px 0 0 0', color: '#8c8c8c', fontSize: '12px' }}>+12% year over year</p>
                 </div>
               </Col>

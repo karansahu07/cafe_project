@@ -301,8 +301,8 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                         width: 8,
                         height: 8,
                         borderRadius: '50%',
-                        background: idx === currentImageIndex ? '#088B46' : 'rgba(255,255,255,0.5)',
-                        border: idx === currentImageIndex ? '2px solid #088B46' : '2px solid #d9d9d9',
+                        background: idx === currentImageIndex ? '#961818' : 'rgba(255,255,255,0.5)',
+                        border: idx === currentImageIndex ? '2px solid #961818' : '2px solid #d9d9d9',
                         transition: 'background 0.3s ease',
                         cursor: 'pointer'
                       }}
@@ -372,7 +372,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                     <span style={{
                       fontSize: 24,
                       fontWeight: '700',
-                      color: '#088B46'
+                      color: '#961818'
                     }}>
                       {formatPrice(calculateDiscountPercentage(product.price, product.discount_percent))}
                     </span>
@@ -389,7 +389,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                   {product.discount_percent > 0 && (
                     <span style={{
                       fontSize: 12,
-                      color: '#088B46',
+                      color: '#961818',
                       fontWeight: '600',
                       background: '#f6ffed',
                       padding: '2px 6px',
@@ -401,7 +401,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <ClockCircleOutlined style={{ color: '#088B46' }} />
+                  <ClockCircleOutlined style={{ color: '#961818' }} />
                   <span style={{ fontSize: 12, color: '#666' }}>Available on fast delivery</span>
                 </div>
               </div>
@@ -462,7 +462,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                           justifyContent: 'space-between',
                           alignItems: 'center',
                           padding: '12px',
-                          border: selectedVariant?.id === variant.id ? '2px solid #088B46' : '1px solid #d9d9d9',
+                          border: selectedVariant?.id === variant.id ? '2px solid #961818' : '1px solid #d9d9d9',
                           borderRadius: 8,
                           cursor: 'pointer',
                           background: selectedVariant?.id === variant.id ? '#f6ffed' : '#fff'
@@ -475,7 +475,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                             height: 16,
                             borderRadius: '50%',
                             border: '2px solid #d9d9d9',
-                            background: selectedVariant?.id === variant.id ? '#088B46' : '#fff',
+                            background: selectedVariant?.id === variant.id ? '#961818' : '#fff',
                             position: 'relative'
                           }}>
                             {selectedVariant?.id === variant.id && (
@@ -524,7 +524,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                         type="text" 
                         size="small"
                         onClick={onClearAddons}
-                        style={{ color: '#088B46' }}
+                        style={{ color: '#961818' }}
                       >
                         clear
                       </Button>
@@ -541,7 +541,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             padding: '12px',
-                            border: isSelected ? '2px solid #088B46' : '1px solid #d9d9d9',
+                            border: isSelected ? '2px solid #961818' : '1px solid #d9d9d9',
                             borderRadius: 8,
                             cursor: 'pointer',
                             background: isSelected ? '#f6ffed' : '#fff'
@@ -554,7 +554,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                               height: 16,
                               borderRadius: '50%',
                               border: '2px solid #d9d9d9',
-                              background: isSelected ? '#088B46' : '#fff',
+                              background: isSelected ? '#961818' : '#fff',
                               position: 'relative'
                             }}>
                               {isSelected && (
@@ -603,8 +603,8 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
                 style={{
                   width: '100%',
                   height: 44,
-                  background: '#088B46',
-                  borderColor: '#088B46',
+                  background: '#961818',
+                  borderColor: '#961818',
                   borderRadius: 22,
                   display: 'flex',
                   alignItems: 'center',
@@ -624,7 +624,7 @@ const MobilePreview = ({ product, selectedImage, selectedVariant, quantity, sele
             bottom: 0,
             left: 0,
             right: 0,
-            background: '#088B46',
+            background: '#961818',
             padding: '16px',
             display: 'flex',
             alignItems: 'center',
@@ -749,7 +749,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#fff' }}>
       {/* Header */}
       <div style={{
-        background: '#088B46',
+        background: '#961818',
         padding: '16px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -848,7 +848,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                       borderRadius: 8,
                       overflow: 'hidden',
                       cursor: 'pointer',
-                      border: selectedDetailImage === image ? '2px solid #088B46' : '2px solid #d9d9d9',
+                      border: selectedDetailImage === image ? '2px solid #961818' : '2px solid #d9d9d9',
                       transition: 'border-color 0.2s ease',
                       flexShrink: 0,
                       position: 'relative',
@@ -907,7 +907,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
               <span style={{
                 fontSize: 24,
                 fontWeight: '700',
-                color: '#088B46'
+                color: '#961818'
               }}>
                 {formatPrice(calculateDiscountPercentage(product.price, product.discount_percent || 0))}
               </span>
@@ -924,7 +924,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
             {product.discount_percent > 0 && (
               <span style={{
                 fontSize: 14,
-                color: '#088B46',
+                color: '#961818',
                 fontWeight: '600',
                 background: '#f6ffed',
                 padding: '4px 8px',
@@ -974,7 +974,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                     <span style={{ 
                       fontSize: 16, 
                       fontWeight: '600',
-                      color: '#088B46'
+                      color: '#961818'
                     }}>
                       {formatPrice(variant.price)}
                     </span>
@@ -1022,7 +1022,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                     <span style={{ 
                       fontSize: 16, 
                       fontWeight: '600',
-                      color: '#088B46'
+                      color: '#961818'
                     }}>
                       {formatPrice(addon.price)}
                     </span>
@@ -1043,7 +1043,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
           }}>
             {/* Basic Information */}
             <div style={{ marginBottom: 16 }}>
-              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#088B46', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#961818', margin: '0 0 8px 0' }}>
                 Basic Information
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1074,7 +1074,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
 
             {/* Pricing Information */}
             <div style={{ marginBottom: 16 }}>
-              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#088B46', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#961818', margin: '0 0 8px 0' }}>
                 Pricing Information
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1086,13 +1086,13 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: 13, color: '#666' }}>Discounted Price</span>
-                      <span style={{ fontSize: 13, fontWeight: '500', color: '#088B46' }}>
+                      <span style={{ fontSize: 13, fontWeight: '500', color: '#961818' }}>
                         {formatPrice(calculateDiscountPercentage(product.price, product.discount_percent))}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: 13, color: '#666' }}>Discount</span>
-                      <span style={{ fontSize: 13, fontWeight: '500', color: '#088B46' }}>{product.discount_percent}%</span>
+                      <span style={{ fontSize: 13, fontWeight: '500', color: '#961818' }}>{product.discount_percent}%</span>
                     </div>
                   </>
                 )}
@@ -1109,7 +1109,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
 
             {/* Stock & Status */}
             <div style={{ marginBottom: 16 }}>
-              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#088B46', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#961818', margin: '0 0 8px 0' }}>
                 Stock & Status
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1118,7 +1118,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                   <span style={{ 
                     fontSize: 13, 
                     fontWeight: '500',
-                    color: product.stock > 0 ? '#088B46' : '#ff4d4f'
+                    color: product.stock > 0 ? '#961818' : '#ff4d4f'
                   }}>
                     {product.stock > 0 ? `${product.stock} available` : 'Out of stock'}
                   </span>
@@ -1128,7 +1128,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                   <span style={{ 
                     fontSize: 13, 
                     fontWeight: '500',
-                    color: product.status === 1 ? '#088B46' : '#ff4d4f'
+                    color: product.status === 1 ? '#961818' : '#ff4d4f'
                   }}>
                     {product.status === 1 ? 'Active' : 'Inactive'}
                   </span>
@@ -1138,7 +1138,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                   <span style={{ 
                     fontSize: 13, 
                     fontWeight: '500',
-                    color: product.fast_delivery_available === 1 ? '#088B46' : '#666'
+                    color: product.fast_delivery_available === 1 ? '#961818' : '#666'
                   }}>
                     {product.fast_delivery_available === 1 ? 'Available' : 'Not Available'}
                   </span>
@@ -1148,7 +1148,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
 
             {/* Features */}
             <div style={{ marginBottom: 16 }}>
-              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#088B46', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#961818', margin: '0 0 8px 0' }}>
                 Features
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1157,7 +1157,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                   <span style={{ 
                     fontSize: 13, 
                     fontWeight: '500',
-                    color: product.is_featured === 1 ? '#088B46' : '#666'
+                    color: product.is_featured === 1 ? '#961818' : '#666'
                   }}>
                     {product.is_featured === 1 ? 'Yes' : 'No'}
                   </span>
@@ -1167,7 +1167,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
                   <span style={{ 
                     fontSize: 13, 
                     fontWeight: '500',
-                    color: product.is_today_deal === 1 ? '#088B46' : '#666'
+                    color: product.is_today_deal === 1 ? '#961818' : '#666'
                   }}>
                     {product.is_today_deal === 1 ? 'Yes' : 'No'}
                   </span>
@@ -1184,7 +1184,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
             {/* Additional Information */}
             {(product.ingredients || product.manufacturer_details || product.nutritional_facts) && (
               <div style={{ marginBottom: 16 }}>
-                <h4 style={{ fontSize: 14, fontWeight: '600', color: '#088B46', margin: '0 0 8px 0' }}>
+                <h4 style={{ fontSize: 14, fontWeight: '600', color: '#961818', margin: '0 0 8px 0' }}>
                   Additional Information
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1212,7 +1212,7 @@ const FullDetails = ({ product, onClose, onToggleMode }) => {
 
             {/* Timestamps */}
             <div>
-              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#088B46', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: 14, fontWeight: '600', color: '#961818', margin: '0 0 8px 0' }}>
                 Timestamps
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1391,7 +1391,7 @@ const MobileProductSheet = ({
           }}>
             {/* Sheet Header with Toggle */}
             <div style={{
-              background: '#088B46',
+              background: '#961818',
               padding: '16px',
               display: 'flex',
               justifyContent: 'space-between',

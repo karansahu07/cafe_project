@@ -43,7 +43,7 @@ const StatCard = ({ title, value, icon, trend, trendValue }) => {
           )}
         </div>
         <div className="icon-box" style={{ backgroundColor: '#e6f7ef', padding: '12px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ color: '#088B46' }}>
+          <span style={{ color: '#961818' }}>
             {getIcon()}
           </span>
         </div>

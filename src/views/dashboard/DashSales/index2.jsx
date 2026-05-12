@@ -179,11 +179,11 @@ export default function DashSales() {
               <Card className="support-bar" style={{ overflow: 'hidden', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.09)' }}>
                 <div style={{ paddingBottom: 0 }}>
                   <h2 style={{ margin: 0 }}>53.94%</h2>
-                  <span style={{ color: '#088B46' }}>Conversion Rate</span>
+                  <span style={{ color: '#961818' }}>Conversion Rate</span>
                   <p style={{ marginBottom: '12px', marginTop: '12px' }}>Number of conversions divided by the total visitors.</p>
                 </div>
                 <Chart {...SalesSupportChartData()} />
-                <div style={{ backgroundColor: '#088B46', color: 'white', padding: '16px' }}>
+                <div style={{ backgroundColor: '#961818', color: 'white', padding: '16px' }}>
                   <Row gutter={8} style={{ textAlign: 'center' }}>
                     <Col span={8}>
                       <h4 style={{ margin: 0, color: 'white' }}>10</h4>
@@ -205,7 +205,7 @@ export default function DashSales() {
               <Card className="support-bar" style={{ overflow: 'hidden', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.09)' }}>
                 <div style={{ paddingBottom: 0 }}>
                   <h2 style={{ margin: 0 }}>1,432</h2>
-                  <span style={{ color: '#088B46' }}>Orders Delivered</span>
+                  <span style={{ color: '#961818' }}>Orders Delivered</span>
                   <p style={{ marginBottom: '12px', marginTop: '12px' }}>Successfully completed and delivered orders this quarter.</p>
                 </div>
                 <div style={{ padding: '16px', borderTop: '1px solid #f0f0f0' }}>

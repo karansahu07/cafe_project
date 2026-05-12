@@ -515,6 +515,8 @@ export default function StoreHome() {
 
   const submitOtpAndComplete = async () => {
     if (!selectedOrder) return;
+
+    // TODO: Re-enable OTP verification when rider OTP flow is ready
     if (!/^\d{6}$/.test(otpValue)) {
       setError('OTP must be exactly 6 digits');
       return;
@@ -522,16 +524,16 @@ export default function StoreHome() {
 
     setActionLoading(true);
     try {
-      await callApi('/order/verifyotprider', {
-        order_id: selectedOrder.order_id,
-        entered_otp: otpValue
-      });
+      // await callApi('/order/verifyotprider', {
+      //   order_id: selectedOrder.order_id,
+      //   entered_otp: otpValue
+      // });
 
       await updateOrderStatus(selectedOrder.order_id, 2);
       setOtpOpen(false);
       await loadHomeData();
     } catch (err) {
-      setError(err?.message || 'OTP verification failed');
+      setError(err?.message || 'Unable to complete order');
     } finally {
       setActionLoading(false);
     }
@@ -799,9 +801,11 @@ export default function StoreHome() {
         </Modal.Header>
         <Modal.Body>
           <div className="d-grid gap-2">
+            {/*
             <Button variant="success" disabled={actionLoading} onClick={handleSendToAllRiders}>
               Send to All Riders Automatically
             </Button>
+            */}
             <Button variant="outline-primary" disabled={actionLoading} onClick={handleOpenManualAssign}>
               Assign Manually
             </Button>

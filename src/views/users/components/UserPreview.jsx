@@ -42,13 +42,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
         left: 0,
         right: 0,
         height: '4px',
-        background: 'linear-gradient(90deg, #088B46 0%, #0a5d32 100%)'
+        background: 'linear-gradient(90deg, #961818 0%, #0a5d32 100%)'
       }}></div>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
         <div style={{
           width: '48px',
           height: '48px',
-          background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+          background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
           borderRadius: '12px',
           display: 'flex',
           alignItems: 'center',
@@ -96,7 +96,7 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
     <div style={{ 
       margin: '-16px -24px -16px -56px', 
       padding: headerPadding, 
-      background: 'linear-gradient(135deg, #088B46 0%, #065a30 100%)',
+      background: 'linear-gradient(135deg, #961818 0%, #065a30 100%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -277,7 +277,7 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
               disabled={user?.is_verified === 1}
               size="middle"
               icon={<Check size={16} />}
-              style={{ background: '#088B46', borderColor: '#088B46' }}
+              style={{ background: '#961818', borderColor: '#961818' }}
             >
               {user?.is_verified === 1 ? 'Already Approved' : 'Approve'}
             </Button>
@@ -314,13 +314,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
                 fontSize: '24px',
                 fontWeight: '700',
                 color: '#1e293b',
-                borderBottom: '3px solid #088B46',
+                borderBottom: '3px solid #961818',
                 paddingBottom: '12px'
               }}>
                 <div style={{
                   width: '40px',
                   height: '40px',
-                  background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+                  background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
                   borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
@@ -384,13 +384,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
                     fontSize: '24px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    borderBottom: '3px solid #088B46',
+                    borderBottom: '3px solid #961818',
                     paddingBottom: '12px'
                   }}>
                     <div style={{
                       width: '40px',
                       height: '40px',
-                      background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+                      background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
                       borderRadius: '10px',
                       display: 'flex',
                       alignItems: 'center',
@@ -454,13 +454,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
                     fontSize: '24px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    borderBottom: '3px solid #088B46',
+                    borderBottom: '3px solid #961818',
                     paddingBottom: '12px'
                   }}>
                     <div style={{
                       width: '40px',
                       height: '40px',
-                      background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+                      background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
                       borderRadius: '10px',
                       display: 'flex',
                       alignItems: 'center',
@@ -501,13 +501,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
                     fontSize: '24px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    borderBottom: '3px solid #088B46',
+                    borderBottom: '3px solid #961818',
                     paddingBottom: '12px'
                   }}>
                     <div style={{
                       width: '40px',
                       height: '40px',
-                      background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+                      background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
                       borderRadius: '10px',
                       display: 'flex',
                       alignItems: 'center',
@@ -567,13 +567,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
                     fontSize: '24px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    borderBottom: '3px solid #088B46',
+                    borderBottom: '3px solid #961818',
                     paddingBottom: '12px'
                   }}>
                     <div style={{
                       width: '40px',
                       height: '40px',
-                      background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+                      background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
                       borderRadius: '10px',
                       display: 'flex',
                       alignItems: 'center',
@@ -613,13 +613,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
                     fontSize: '24px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    borderBottom: '3px solid #088B46',
+                    borderBottom: '3px solid #961818',
                     paddingBottom: '12px'
                   }}>
                     <div style={{
                       width: '40px',
                       height: '40px',
-                      background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+                      background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
                       borderRadius: '10px',
                       display: 'flex',
                       alignItems: 'center',
@@ -669,13 +669,13 @@ const UserPreview = ({ user, userType, loading, open = false, onClose, onApprove
                     fontSize: '24px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    borderBottom: '3px solid #088B46',
+                    borderBottom: '3px solid #961818',
                     paddingBottom: '12px'
                   }}>
                     <div style={{
                       width: '40px',
                       height: '40px',
-                      background: 'linear-gradient(135deg, #088B46 0%, #0a5d32 100%)',
+                      background: 'linear-gradient(135deg, #961818 0%, #0a5d32 100%)',
                       borderRadius: '10px',
                       display: 'flex',
                       alignItems: 'center',

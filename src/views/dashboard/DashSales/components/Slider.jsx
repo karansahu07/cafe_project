@@ -118,9 +118,9 @@ const Slider = ({ items }) => {
                             marginRight: 8
                           }}>
                             {IconComponent ? (
-                              <IconComponent size={16} color="#088B46" />
+                              <IconComponent size={16} color="#961818" />
                             ) : (
-                              <span style={{ color: '#088B46', fontSize: 16 }}>{stat.icon}</span>
+                              <span style={{ color: '#961818', fontSize: 16 }}>{stat.icon}</span>
                             )}
                           </div>
                           <div>
@@ -186,9 +186,9 @@ const Slider = ({ items }) => {
                                   marginRight: 8
                                 }}>
                                   {IconComponent ? (
-                                    <IconComponent size={16} color="#088B46" />
+                                    <IconComponent size={16} color="#961818" />
                                   ) : (
-                                    <span style={{ color: '#088B46', fontSize: 16 }}>{stat.icon}</span>
+                                    <span style={{ color: '#961818', fontSize: 16 }}>{stat.icon}</span>
                                   )}
                                 </div>
                                 <div>
@@ -216,7 +216,7 @@ const Slider = ({ items }) => {
                 style={{
                   width: 10,
                   height: 10,
-                  backgroundColor: activeIndex === index ? '#088B46' : '#ddd',
+                  backgroundColor: activeIndex === index ? '#961818' : '#ddd',
                   borderRadius: '50%',
                   border: 'none',
                   margin: '0 4px',
