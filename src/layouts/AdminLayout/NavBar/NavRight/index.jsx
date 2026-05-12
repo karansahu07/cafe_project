@@ -9,7 +9,7 @@ import FeatherIcon from 'feather-icons-react';
 import useVendorNotifications from '../../../../hooks/useVendorNotifications';
 
 // assets
-import avatar2 from 'assets/images/user/avatar-2.svg';
+import logo from 'assets/images/logo.svg';
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 // -----------------------|| NAV RIGHT ||-----------------------//
@@ -131,7 +131,7 @@ export default function NavRight() {
       <ListGroup.Item as="li" bsPrefix=" " className="pc-h-item">
         <Dropdown className="drp-user">
           <Dropdown.Toggle as="a" variant="link" className="pc-head-link arrow-none me-0 user-name">
-            <img src={avatar2} alt="userimage" className="user-avatar" />
+            <img src={logo} alt="userimage" className="user-avatar" />
             <span>
               <span className="user-name">{username}</span>
             </span>

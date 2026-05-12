@@ -1,5 +1,5 @@
 // imports from project
-export const BASE_TITLE = ' | GoGreen Admin ';
+export const BASE_TITLE = ' | e-chai dashboard ';
 
 // -----------------------|| Application default Configuration ||-----------------------//
 

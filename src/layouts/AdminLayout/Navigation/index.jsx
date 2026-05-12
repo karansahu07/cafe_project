@@ -9,7 +9,7 @@
 // import * as actionType from 'store/actions';
 
 // // assets
-// import avatar2 from 'assets/images/user/avatar-2.svg';
+// import logo from 'assets/images/logo.svg';
 
 // // -----------------------|| NAVIGATION ||-----------------------//
 
@@ -53,7 +53,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 // Ant Design components
-import { Menu, Layout, Avatar, Typography, Badge, Tooltip, Button } from 'antd';
+import { Menu, Layout, Avatar, Typography, Tooltip, Button } from 'antd';
 import {
   HomeOutlined,
   PictureOutlined,
@@ -77,9 +77,9 @@ import navigation from 'menu-items';
 import { getMenuItemsByRole } from 'menu-items';
 import navitemcollapse from 'menu-items-collapse';
 import * as actionType from 'store/actions';
-import { getResolvedRoleId } from '../../../utils/authSession';
+import { getResolvedRoleId, getResolvedUserId } from '../../../utils/authSession';
 // assets
-import avatar2 from 'assets/images/user/avatar-2.svg';
+import logo from 'assets/images/logo.svg';
 
 const { Sider } = Layout;
 const { Title, Text } = Typography;
@@ -164,6 +164,57 @@ export default function ModernNavigation() {
   
   const [selectedKeys, setSelectedKeys] = useState(['dashboard']);
   const [openKeys, setOpenKeys] = useState([]);
+  const [storeName, setStoreName] = useState(localStorage.getItem('username') || 'User');
+  const [storeAddress, setStoreAddress] = useState(Number(roleId) === 3 ? 'Store' : 'Administrator');
+
+  useEffect(() => {
+    const isVendor = Number(roleId) === 3;
+    if (!isVendor) {
+      setStoreName(localStorage.getItem('username') || 'User');
+      setStoreAddress('Administrator');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    const userId = getResolvedUserId();
+    if (!token || !userId) {
+      setStoreName(localStorage.getItem('username') || 'Store');
+      setStoreAddress('Address unavailable');
+      return;
+    }
+
+    let ignore = false;
+    const loadVendorProfile = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/vendors/vendor-profile`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ user_id: userId, role_id: 3 })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        const profile = data?.data || data?.vendor || data?.profile || data || {};
+
+        if (!ignore) {
+          setStoreName(profile?.store_name || profile?.name || localStorage.getItem('username') || 'Store');
+          setStoreAddress(profile?.address || profile?.store_address || profile?.vendor_address || 'Address unavailable');
+        }
+      } catch {
+        if (!ignore) {
+          setStoreName(localStorage.getItem('username') || 'Store');
+          setStoreAddress('Address unavailable');
+        }
+      }
+    };
+
+    loadVendorProfile();
+    return () => {
+      ignore = true;
+    };
+  }, [roleId]);
 
   useEffect(() => {
     // Find current menu item and its parent based on location
@@ -309,21 +360,16 @@ export default function ModernNavigation() {
           
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px'}}>
-              <Avatar style={{border:"1px solid white",background:"white", padding:2 }} size={collapseMenu ? 40 : 40} src={avatar2} />
+              <Avatar style={{ border: '1px solid white', background: 'white', padding: 2 }} size={collapseMenu ? 40 : 40} src={logo} />
               {!collapseMenu && (
                 <div style={{ flex: 1 }}>
                   <Text style={{ color: 'white', fontWeight: 500, display: 'block' }}>
-                    John Doe
+                    {storeName}
                   </Text>
                   <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
-                    Administrator
+                    {storeAddress}
                   </Text>
                 </div>
-              )}
-              {!collapseMenu && (
-                <Badge count={5} size="small">
-                  <BellOutlined style={{ color: 'rgba(255,255,255,0.6)', fontSize: '16px' }} />
-                </Badge>
               )}
             </div>
           </div>
@@ -363,7 +409,7 @@ export default function ModernNavigation() {
                 width: '100%',
                 borderRadius: '6px',
                 minWidth:"32px",
-                background: 'linear-gradient(135deg, #088B46 0%,rgb(4, 143, 69) 100%)',
+                background: 'linear-gradient(135deg, #961818 0%,rgb(4, 143, 69) 100%)',
                 border: 'none'
               }}
             >

@@ -25,7 +25,7 @@ root.render(
      <AntConfigProvider
       theme={{
         token: {
-          colorPrimary: '#088B46',  // your desired color
+          colorPrimary: '#961818',  // your desired color
           colorBorder: 'black', // 👈 brighter blue-grey border
 
         },

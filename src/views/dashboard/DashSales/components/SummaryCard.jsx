@@ -43,7 +43,7 @@ const SummaryCard = ({ title, metrics }) => {
                         justifyContent: 'center',
                         marginRight: '8px'
                       }}>
-                        <span style={{ color: '#088B46' }}>
+                        <span style={{ color: '#961818' }}>
                           {getIcon()}
                         </span>
                       </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import "../../assets/scss/loader.scss";
-const Loader = ({ color = "#088B46", trackColor = "#cacaca20" }) => {
+const Loader = ({ color = "#961818", trackColor = "#cacaca20" }) => {
   return (
     <div
       className="preloader"

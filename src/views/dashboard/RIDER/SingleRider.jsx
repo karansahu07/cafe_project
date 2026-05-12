@@ -39,7 +39,7 @@ const { Title, Text } = Typography;
 
 // Theme palette
 const THEME = {
-  primary: '#088B46',
+  primary: '#961818',
   secondary: '#0AA95A',
   warning: '#faad14',
   danger: '#f5222d',

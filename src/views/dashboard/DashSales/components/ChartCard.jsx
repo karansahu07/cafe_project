@@ -43,7 +43,7 @@ const ChartCard = ({ title, subtitle, chartData, chartType = 'line', showLegend 
             {chartData.summary.map((item, index) => (
               <Col key={index} xs={12} sm={12} md={8} lg={8} xl={8}>
                 <div className="summary-item">
-                  <h3 style={{ margin: '0 0 4px 0', color: item.color || '#088B46', fontSize: '20px', fontWeight: '600' }}>{item.value}</h3>
+                  <h3 style={{ margin: '0 0 4px 0', color: item.color || '#961818', fontSize: '20px', fontWeight: '600' }}>{item.value}</h3>
                   <span style={{ color: '#8c8c8c', fontSize: '14px' }}>{item.label}</span>
                 </div>
               </Col>
@@ -61,12 +61,12 @@ const ChartCard = ({ title, subtitle, chartData, chartType = 'line', showLegend 
                 ...chartData.options.theme,
                 monochrome: {
                   enabled: true,
-                  color: '#088B46',
+                  color: '#961818',
                   shadeTo: 'light',
                   shadeIntensity: 0.65
                 }
               },
-              colors: chartData.options.colors || ['#088B46', '#baf7d7', '#e6f7ef'],
+              colors: chartData.options.colors || ['#961818', '#baf7d7', '#e6f7ef'],
               chart: {
                 ...chartData.options.chart,
                 toolbar: {

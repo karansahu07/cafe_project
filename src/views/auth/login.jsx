@@ -2,7 +2,7 @@ import { Card, Row, Col, Button, Form, InputGroup } from 'react-bootstrap';
 import FeatherIcon from 'feather-icons-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoDark from 'assets/images/logo1.svg';
+import logoDark from 'assets/images/logo.svg';
 import { jwtDecode } from 'jwt-decode';
 import useAuth from '../../store/useAuth';
 import { getHomeRouteFromRoleId, getResolvedRoleId } from '../../utils/authSession';
