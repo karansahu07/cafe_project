@@ -58,12 +58,13 @@ const extractRidersArray = (payload) => {
 };
 
 const getStatusMeta = (status) => {
-  if (status == null) return { text: 'Pending Order', className: 'warning' };
+  if (status == null) return { text: 'Pending', className: 'warning' };
   const value = safeNumber(status, -1);
-  if (value === 0) return { text: 'Pending Order', className: 'warning' };
-  if (value === 1) return { text: 'Order Preparing', className: 'info' };
-  if (value === 2) return { text: 'Order Completed', className: 'success' };
-  if (value === 3) return { text: 'Order Rejected', className: 'danger' };
+  if (value === 0) return { text: 'Pending', className: 'warning' };
+  if (value === 1) return { text: 'Confirmed / Assigned', className: 'info' };
+  if (value === 2) return { text: 'Out for Delivery', className: 'primary' };
+  if (value === 3) return { text: 'Rejected', className: 'danger' };
+  if (value === 4) return { text: 'Delivered / Completed', className: 'success' };
   return { text: 'Unknown', className: 'secondary' };
 };
 
@@ -375,16 +376,21 @@ export default function StoreHome() {
     loadHomeData();
   }, [loadHomeData, notifications, ready]);
 
+  // Sort orders by newest first (latest created_at)
   const todayOrders = useMemo(() => {
-    return orders.filter((order) => isTodayByLocalDate(order?.order_created_at));
+    return orders
+      .filter((order) => isTodayByLocalDate(order?.order_created_at))
+      .sort((a, b) => new Date(b.order_created_at || 0) - new Date(a.order_created_at || 0));
   }, [orders]);
 
+  // Active orders: status 0,1,2,3 (not delivered)
   const filteredPrepareOrders = useMemo(() => {
-    return todayOrders.filter((order) => order.order_status == null || (safeNumber(order.order_status) > 0 && safeNumber(order.order_status) !== 2));
+    return todayOrders.filter((order) => safeNumber(order.order_status) !== 4);
   }, [todayOrders]);
 
+  // Completed orders: status 4 only
   const filteredOrderReadyOrders = useMemo(() => {
-    return todayOrders.filter((order) => safeNumber(order.order_status) === 2);
+    return todayOrders.filter((order) => safeNumber(order.order_status) === 4);
   }, [todayOrders]);
 
   const filteredReceiveOrders = useMemo(() => {
@@ -516,7 +522,6 @@ export default function StoreHome() {
   const submitOtpAndComplete = async () => {
     if (!selectedOrder) return;
 
-    // TODO: Re-enable OTP verification when rider OTP flow is ready
     if (!/^\d{6}$/.test(otpValue)) {
       setError('OTP must be exactly 6 digits');
       return;
@@ -524,16 +529,18 @@ export default function StoreHome() {
 
     setActionLoading(true);
     try {
-      // await callApi('/order/verifyotprider', {
-      //   order_id: selectedOrder.order_id,
-      //   entered_otp: otpValue
-      // });
+      // Call the OTP verification API
+      await callApi('/order/verifyotprider', {
+        order_id: selectedOrder.order_id,
+        rider_id: selectedOrder.rider_id || selectedOrder.rider_unique_id || selectedOrder.riderId || '',
+        entered_otp: otpValue
+      }, 'POST');
 
-      await updateOrderStatus(selectedOrder.order_id, 2);
       setOtpOpen(false);
       await loadHomeData();
+      // Optionally show a toast/notification here
     } catch (err) {
-      setError(err?.message || 'Unable to complete order');
+      setError(err?.message || 'Unable to verify OTP');
     } finally {
       setActionLoading(false);
     }
@@ -783,13 +790,17 @@ export default function StoreHome() {
             value={otpValue}
             onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, '').slice(0, 6))}
             maxLength={6}
+            disabled={actionLoading || (selectedOrder && selectedOrder.is_verified)}
           />
+          {selectedOrder && selectedOrder.is_verified ? (
+            <div className="mt-2 text-success fw-bold">Pickup Verified</div>
+          ) : null}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setOtpOpen(false)}>
             Cancel
           </Button>
-          <Button variant="primary" disabled={actionLoading} onClick={submitOtpAndComplete}>
+          <Button variant="primary" disabled={actionLoading || (selectedOrder && selectedOrder.is_verified)} onClick={submitOtpAndComplete}>
             Verify & Complete
           </Button>
         </Modal.Footer>
