@@ -387,9 +387,12 @@ export default function useAddProductHook(form,data) {
         if (values.quantity !== "" && values.quantity !== undefined && values.quantity !== null) {
           formData.append("product_quantity", values.quantity);
         }
-        formData.append("stock", Number(values.stock));
       } else {
         formData.append("is_available", values.is_available ? 1 : 0);
+      }
+      // Add product_status to payload
+      if (values.product_status) {
+        formData.append("product_status", values.product_status);
       }
   
       formData.append("fast_delivery_available", values.fast_delivery_available ? 1 : 0);

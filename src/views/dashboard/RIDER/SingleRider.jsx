@@ -267,12 +267,8 @@ const RiderDashboard = () => {
 
   // Formatting functions
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value || 0);
+    // Show rupee icon and Indian formatting
+    return `[20B₹${Number(value || 0).toLocaleString('en-IN')}`;
   };
 
   const formatNumber = (value) => {
@@ -376,7 +372,8 @@ const RiderDashboard = () => {
           <div>
             <Text type="secondary">{title}</Text>
             <Title level={4} style={{ margin: 0 }}>
-              {typeof value === 'number' ? formatCurrency(value) : value}{suffix}
+              {/* If value is number, show rupee icon, else show as is */}
+              {typeof value === 'number' ? <span style={{fontFamily:'inherit'}}>&#8377;{Number(value || 0).toLocaleString('en-IN')}</span> : value}{suffix}
               {trend && (
                 <span style={{ 
                   fontSize: '14px', 

@@ -96,10 +96,19 @@ export const productTableColumns = (BASE_URL, handleUpdate, handleDelete, pagina
     }
   },
   {
-    title: 'Stock',
-    dataIndex: 'stock',
-    sorter: true,
+    title: 'Status',
+    dataIndex: 'product_status',
+    key: 'product_status',
     width: 100,
+    render: (status) => (
+      <span style={{
+        color: status === 'active' ? '#52c41a' : '#ff4d4f',
+        fontWeight: 600,
+        textTransform: 'capitalize'
+      }}>
+        {status}
+      </span>
+    ),
   },
   {
     title: 'Featured',

@@ -43,17 +43,13 @@ export function convertTimeRange(start, end) {
   
 
   //format price in currency format
-  export const formatPrice = (value, symbol = '$') => {
+  export const formatPrice = (value, symbol = '₹') => {
     const num = Number(value);
-  
     if (isNaN(num)) return "-";
-  
-    const formatted = num.toLocaleString();
-  
+    const formatted = num.toLocaleString('en-IN');
     if (symbol === false) {
       return formatted;
     }
-  
     return `${symbol}${formatted}`;
   };
   
