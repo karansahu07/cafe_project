@@ -39,17 +39,12 @@ const AllCategory = () => {
       form.setFieldsValue({
         name: selectedCategory.name,
         description: selectedCategory.description,
-        status: selectedCategory.status,
+        // status: selectedCategory.status, // removed
       });
     }
   }, [editModal, selectedCategory, form]);
 
-  const expandedRowRender = record => (
-    <div style={{ padding: 8 }}>
-      <b>Description:</b> {record.description || 'No description'}
-    </div>
-  );
-
+  // Columns array (status/approval removed)
   const columns = [
     {
       title: '#',
@@ -96,18 +91,6 @@ const AllCategory = () => {
       ),
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      width: 120,
-      render: (status, record) => (
-        <Switch
-          checked={status === 1}
-          onChange={checked => handleToggleActive(record.id, checked ? 1 : 0)}
-        />
-      ),
-    },
-    {
       title: 'Action',
       key: 'action',
       width: 160,
@@ -149,10 +132,6 @@ const AllCategory = () => {
         onChange={onTableChange}
         rowKey={record => record.id}
         scroll={{ x: 'max-content' }}
-        expandable={{
-          expandedRowRender,
-          expandIconColumnIndex: 4, // after Description column (index 3)
-        }}
       />
       {/* Edit Modal */}
       <Modal
@@ -171,7 +150,7 @@ const AllCategory = () => {
             initialValues={{
               name: selectedCategory.name,
               description: selectedCategory.description,
-              status: selectedCategory.status,
+              // status: selectedCategory.status, // removed
             }}
           >
             <Form.Item label="Category Name" name="name" rules={[{ required: true, message: 'Please enter category name' }]}> 
@@ -200,14 +179,7 @@ const AllCategory = () => {
                 </div>
               )}
             </Form.Item>
-            <Form.Item label="Status" name="status" valuePropName="checked">
-              <Switch
-                checkedChildren="Active"
-                unCheckedChildren="Inactive"
-                checked={form.getFieldValue('status') === 1}
-                onChange={checked => form.setFieldsValue({ status: checked ? 1 : 0 })}
-              />
-            </Form.Item>
+            {/* Status field removed from edit modal */}
             <Form.Item>
               <Button onClick={closeEditModal} style={{ marginRight: 8 }}>
                 Cancel

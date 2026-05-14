@@ -1,4 +1,5 @@
 import React from "react";
+import { formatPrice } from '../../../../services/utils/gen_utility';
 
 const PricePreview = ({ price = 0, discountPrice = 0, enableDiscount = false }) => {
   const percent =
@@ -13,7 +14,7 @@ const PricePreview = ({ price = 0, discountPrice = 0, enableDiscount = false }) 
         <span style={{ fontWeight: 500, whiteSpace: "nowrap" }}>Price Preview:</span>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ color: "#52c41a", fontWeight: 600, fontSize: 16 }}>
-            ${price.toFixed(2)}
+            {formatPrice(price)}
           </span>
         </div>
       </div>
@@ -26,10 +27,10 @@ const PricePreview = ({ price = 0, discountPrice = 0, enableDiscount = false }) 
       <span style={{ fontWeight: 500, whiteSpace: "nowrap" }}>Price Preview:</span>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span style={{ textDecoration: "line-through", color: "#888" }}>
-          ${price.toFixed(2)}
+          {formatPrice(price)}
         </span>
         <span style={{ color: "#52c41a", fontWeight: 600, fontSize: 16 }}>
-          ${Number(discountPrice).toFixed(2)}
+          {formatPrice(discountPrice)}
         </span>
         <span
           style={{

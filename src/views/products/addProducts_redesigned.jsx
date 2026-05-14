@@ -289,7 +289,7 @@ const ProductRegistration = () => {
       <Row gutter={[24, 16]}>
         <Col xs={24} md={8}>
           <Form.Item
-            label={<Text strong>Price ($)</Text>}
+            label={<Text strong>Price (₹)</Text>}
             name="price"
             rules={[{ required: true, message: "Please enter price" }]}
           >
@@ -297,7 +297,7 @@ const ProductRegistration = () => {
               size="large"
               type="number" 
               placeholder="0.00"
-              prefix="$"
+              prefix="₹"
               onChange={e => {
                 const price = Number(e.target.value);
                 const discount = Number(form.getFieldValue('discount_price'));
@@ -314,7 +314,7 @@ const ProductRegistration = () => {
 
         <Col xs={24} md={8}>
           <Form.Item
-            label={<Text strong>Discount Price ($)</Text>}
+            label={<Text strong>Discount Price (₹)</Text>}
             name="discount_price"
             rules={[{ required: true, message: "Please enter discount price" }]}
           >
@@ -322,7 +322,7 @@ const ProductRegistration = () => {
               size="large"
               type="number" 
               placeholder="0.00"
-              prefix=" $"
+              prefix="₹"
               onChange={e => {
                 const discount = Number(e.target.value);
                 const price = Number(form.getFieldValue('price'));

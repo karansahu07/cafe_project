@@ -23,7 +23,16 @@ export default function useCatagoryHook() {
       try {
         const response = await getAllCategories();
         let categories = response.success ? response.data || response : [];
-        categories = categories.map((cat, idx) => ({ ...cat, sr: idx + 1 }));
+        // Only keep allowed fields
+        categories = categories.map((cat, idx) => ({
+          id: cat.id,
+          listed_by: cat.listed_by,
+          name: cat.name,
+          description: cat.description,
+          category_logo: cat.category_logo,
+          created_at: cat.created_at,
+          sr: idx + 1
+        }));
         setAllCategories(categories);
       } catch (err) {
         setError(err.message || 'Failed to fetch categories');
@@ -89,9 +98,11 @@ export default function useCatagoryHook() {
     setFormLoading(true);
     try {
       const updatedCategory = {
-        ...selectedCategory,
-        ...formValues,
+        id: selectedCategory.id,
+        name: formValues.name,
+        description: formValues.description,
         category_logo: selectedCategory.category_logo,
+        // Do NOT send status/approval fields
       };
       const result = await updateCategory(updatedCategory);
       if (result.success && result.data) {

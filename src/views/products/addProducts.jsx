@@ -522,7 +522,7 @@ const ProductRegistration = ({ data }) => {
                         <Input
                           type="number"
                           placeholder="0.00"
-                          prefix={<DollarOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+                          prefix={<span style={{ color: 'rgba(0,0,0,.65)' }}>₹</span>}
                           onChange={(e) => {
                             const price = Number(e.target.value);
 
@@ -595,7 +595,7 @@ const ProductRegistration = ({ data }) => {
                             <InputNumber
                               style={{ width: '100%' }}
                               placeholder="Discount Price"
-                              prefix={<DollarOutlined />}
+                              prefix={<span>₹</span>}
                               min={0}
                               onChange={(discount) => {
                                 if (price && Number(discount) <= Number(price)) {
@@ -677,8 +677,11 @@ const ProductRegistration = ({ data }) => {
                       </Form.Item>
                     </Col>
                     <Col md={6} xs={24}>
-                      <Form.Item label="Stock Quantity" name="stock" rules={[{ required: true, message: 'Please enter stock quantity' }]}>
-                        <Input type="number" min={0} placeholder="Available stock" />
+                      <Form.Item label="Product Status" name="product_status" initialValue="active" rules={[{ required: true, message: 'Please select product status' }]}> 
+                        <Select style={{ width: '100%' }}>
+                          <Select.Option value="active">Active</Select.Option>
+                          <Select.Option value="inactive">Inactive</Select.Option>
+                        </Select>
                       </Form.Item>
                     </Col>
                   </>

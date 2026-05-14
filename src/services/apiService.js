@@ -1,85 +1,66 @@
-// import axios from "axios";
-// import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import axios from "./axiosInstanse";
-const API_URL = import.meta.env.VITE_API_URL;
+import axios from './axiosInstanse';
 
-// const axios = api.create({
-//     baseURL: API_URL,
-// });
-const token = localStorage.getItem("token");
+const token = localStorage.getItem('token');
 const config = {
-    headers: {
-        Authorization:  `Bearer ${localStorage.getItem("token")|| token}` ,
-        "Content-Type": "application/json",  // ✅ Use JSON instead of multipart/form-data
-    },
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem('token') || token}`,
+    'Content-Type': 'application/json'
+  }
 };
 const configwithform = {
-    headers: {
-        Authorization:  `Bearer ${token}` ,
-        "Content-Type": "multipart/form-data", // ✅ Ensure correct content type
-    },
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'multipart/form-data'
+  }
 };
 
 const getVendorAuthHeaders = () => {
-  const vendorToken = localStorage.getItem("vendor_ini_token") || localStorage.getItem("user_token");
+  const vendorToken = localStorage.getItem('vendor_ini_token') || localStorage.getItem('user_token');
   return vendorToken ? { Authorization: `Bearer ${vendorToken}` } : {};
 };
 
 const getVendorJsonConfig = () => ({
   headers: {
     ...getVendorAuthHeaders(),
-    "Content-Type": "application/json",
-  },
+    'Content-Type': 'application/json'
+  }
 });
-
 const getVendorFormConfig = () => ({
   headers: {
     ...getVendorAuthHeaders(),
-    "Content-Type": "multipart/form-data",
-  },
+    'Content-Type': 'multipart/form-data'
+  }
 });
 
-// ✅ Axios instance for cleaner API calls
-// const axios = axios.create({
-//     baseURL: API_URL,
-//     headers: {
-//         "Content-Type": "application/json",
-//     },
-// });
+//
 
-// ✅ Fetch all categories
+// Fetch all categories
 export const getAllCategories = async () => {
   try {
-      const response = await axios.post("/category/fetch-categories", {
-          is_web: true
-      }, config);
-
-      return { success: true, data: response.data.categories || [] };
+    const response = await axios.post('/category/fetch-categories', { is_web: true }, config);
+    return { success: true, data: response.data.categories || [] };
   } catch (error) {
-      console.error("Failed to fetch categories:", error);
-      return { success: false, error: error.response?.data || "Something went wrong" };
+    console.error('Failed to fetch categories:', error);
+    return { success: false, error: error.response?.data || 'Something went wrong' };
   }
 };
 export const getAllSubCategoriesbyID = async (catID) => {
-    try {
-        const response = await axios.post("/subcategory/subcategoriesbycatID", { catID }, config);
-        return { success: true, data: response.data.subcategories || [] };
-    } catch (error) {
-        console.error("Failed to fetch subcategories:", error);
-        return { success: false, error: error.response?.data || "Something went wrong" };
-    }
+  try {
+    const response = await axios.post('/subcategory/subcategoriesbycatID', { catID }, config);
+    return { success: true, data: response.data.subcategories || [] };
+  } catch (error) {
+    console.error('Failed to fetch subcategories:', error);
+    return { success: false, error: error.response?.data || 'Something went wrong' };
+  }
 };
-export const getAllSubCategories = async (catID) => {
-    try {
-      const response = await axios.post("/subcategory/fetch-subcategories", {
-        is_web: true
-    }, config);
-        return { success: true, data: response.data.subcategories || [] };
-    } catch (error) {
-        console.error("Failed to fetch subcategories:", error);
-        return { success: false, error: error.response?.data || "Something went wrong" };
-    }
+export const getAllSubCategories = async () => {
+  try {
+    const response = await axios.post('/subcategory/fetch-subcategories', { is_web: true }, config);
+    return { success: true, data: response.data.subcategories || [] };
+  } catch (error) {
+    console.error('Failed to fetch subcategories:', error);
+    return { success: false, error: error.response?.data || 'Something went wrong' };
+  }
 };
 export const getAllProducts = async (options = {}) => {
   try {
@@ -99,85 +80,83 @@ export const getAllProducts = async (options = {}) => {
 
     return { success: true, data: response.data?.products || [] };
   } catch (error) {
-    console.error("Failed to fetch products:", error);
-    return { success: false, error: error.response?.data || "Something went wrong" };
+    console.error('Failed to fetch products:', error);
+    return { success: false, error: error.response?.data || 'Something went wrong' };
   }
-};
+}
 
 
 // ✅ Update a product
 export const updateProduct = async (formData) => {
-    try {
-      
-        const response = await axios.post(`/products/update-products`, formData, configwithform);
-        return { success: response.data.success !== undefined ? response.data.success : true, data: response.data };
-    } catch (error) {
-        console.error("Failed to update product:", error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-};
+  try {
+    const response = await axios.post('/products/update-products', formData, configwithform);
+    return { success: response.data.success !== undefined ? response.data.success : true, data: response.data };
+  } catch (error) {
+    console.error('Failed to update product:', error);
+    return { success: false, error: error.response?.data || error.message };
+  }
+}
 
 // ✅ Add a new product brand
 export const addProductBrand = async (formData) => {
-    try {
-
-        const response = await axios.post("/productbrands/product-brands", formData, configwithform);
-        return { success: true, data: response.data };
-    } catch (error) {
-        console.error("Failed to add product brand:", error);
-        return { success: false, error: error.response?.data || "Failed to add product brand" };
-    }
-};
+  try {
+    const response = await axios.post('/productbrands/product-brands', formData, configwithform);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Failed to add product brand:', error);
+    return { success: false, error: error.response?.data || 'Failed to add product brand' };
+  }
+}
 
 // ✅ Update a product brand
 export const updateProductBrand = async (formData) => {
-    try {
-        const response = await axios.put("/productbrands/product-brands", formData, configwithform);
-        return { success: true, data: response.data };
-    } catch (error) {
-        console.error("Failed to update product brand:", error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-};
+  try {
+    const response = await axios.put('/productbrands/product-brands', formData, configwithform);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Failed to update product brand:', error);
+    return { success: false, error: error.response?.data || error.message };
+  }
+}
 
 // ✅ Delete a product brand
 export const deleteProductBrand = async (id) => {
-    try {
-        const response = await axios.delete(`/productbrands/product-brands`, {
-            ...config,
-            data: { id },
-        });
-        return { success: true, data: response.data };
-    } catch (error) {
-        console.error("Failed to delete product brand:", error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-};
+  try {
+    const response = await axios.delete('/productbrands/product-brands', {
+      ...config,
+      data: { id }
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Failed to delete product brand:', error);
+    return { success: false, error: error.response?.data || error.message };
+  }
+}
 
 // update category divs
 export const saveproductCategories = async (category, index) => {
-    try {
-
-        const payload = { category, index };  // ✅ Send both values inside an object
-
-        const response = await axios.put("/dynamiccat/save-categories", payload, config);
-        return response.data;
-    } catch (error) {
-        console.error("Failed to update category", error);
-        throw error;  // ✅ Throw error to handle it in `handleSaveCategory`
-    }
-};
+  try {
+    const payload = { category, index };
+    const response = await axios.put('/dynamiccat/save-categories', payload, config);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update category', error);
+    throw error;
+  }
+}
 
 // fetch product brands
 export const productfetchBrands = async () => {
-    try {
-        const response = await axios.get("/productbrands/allproduct-brands",configwithform);
-        console.log("brands",response.data.productBrands)
-        return { success: true, data: response.data.productBrands || [] };
-    } catch (err) {
-        setError("Failed to fetch brands.");
-      }
-};
+  try {
+    const response = await axios.get('/productbrands/allproduct-brands', configwithform);
+    console.log('brands', response.data.productBrands);
+    return { success: true, data: response.data.productBrands || [] };
+  } catch (error) {
+    // setError is not defined in this scope, so just log the error
+    console.error('Failed to fetch brands:', error);
+    return { success: false, error: error.response?.data || error.message };
+  }
+}
 
 export const getShowSelectedCategory = async (index) => {
     try {
@@ -283,14 +262,12 @@ export const deleteBanner = async (bannerId) => {
       formData.append("id", selectedCategory.id);
       formData.append("name", selectedCategory.name);
       formData.append("description", selectedCategory.description);
-      formData.append("status", selectedCategory.status);
-
+      // Do NOT send status/approval fields
       if (selectedCategory.category_logo instanceof File) {
         formData.append("category_logo", selectedCategory.category_logo); // New image
       } else if (selectedCategory.category_logo) {
         formData.append("existing_category_logo", selectedCategory.category_logo); // Retain existing image
       }
-
       const response = await axios.put(`/category/categories`, formData, configwithform);
       return { success: true, data: response.data.category };
     } catch (err) {
