@@ -143,14 +143,11 @@ export default function VendorTable() {
         // </Space>
           <Tooltip title="View">
             <Button
-              // size="small"
-              type="primary"rider_id
+              type="primary"
               icon={<EyeOutlined />}
-              href={`/vendors/${record.vendor_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => navigate(`/vendors/${record.vendor_id}`)}
             >view</Button>
-          </Tooltip> 
+          </Tooltip>
       ),
     },
   ];

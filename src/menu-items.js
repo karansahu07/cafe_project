@@ -107,8 +107,7 @@ const adminMenuItems = {
       ]
     },
 
-
-
+    /*
     {
       id: 'vendortype-group',
       type: 'group',
@@ -124,6 +123,8 @@ const adminMenuItems = {
         }
       ]
     },
+    */
+    /*
      // Brands Group
      {
       id: 'brands-group',
@@ -159,7 +160,7 @@ const adminMenuItems = {
         }
       ]
     },
-
+    */
 
     // Categories Group
     {
@@ -193,7 +194,8 @@ const adminMenuItems = {
               iconname: 'people_alt'
             }
           ]
-        },
+        }
+        /*
         {
           id: 'manage-subcategory',
           title: 'Product Sub-Categories',
@@ -221,11 +223,12 @@ const adminMenuItems = {
             }
           ]
         }
+        */
       ]
     },
 
-     // Products Group
-     {
+    // Products Group
+    {
       id: 'products-group',
       type: 'group',
       icon: 'icon-support',
@@ -254,7 +257,7 @@ const adminMenuItems = {
               classes: 'nav-item',
               icon: 'material-icons-two-tone',
               iconname: 'people_alt'
-            },
+            }
             // {
             //   id: 'product-discount',
             //   title: 'Products Discount',
@@ -268,8 +271,8 @@ const adminMenuItems = {
         }
       ]
     },
-     // order Group
-     {
+    // order Group
+    {
       id: 'orders-group',
       type: 'group',
       icon: 'icon-support',
@@ -281,7 +284,6 @@ const adminMenuItems = {
           icon: 'material-icons-two-tone',
           iconname: 'add_shopping_cart',
           children: [
-         
             {
               id: 'all-orders',
               title: 'All Orders',
@@ -290,14 +292,13 @@ const adminMenuItems = {
               classes: 'nav-item',
               icon: 'material-icons-two-tone',
               iconname: 'people_alt'
-            },
-           
+            }
           ]
         }
       ]
     },
-     // vendor Group
-     {
+    // vendor Group
+    {
       id: 'vendor-group',
       type: 'group',
       icon: 'icon-support',
@@ -309,7 +310,6 @@ const adminMenuItems = {
           icon: 'material-icons-two-tone',
           iconname: 'storefront',
           children: [
-         
             {
               id: 'all-vendors',
               title: 'All Vendors',
@@ -318,43 +318,38 @@ const adminMenuItems = {
               classes: 'nav-item',
               icon: 'material-icons-two-tone',
               iconname: 'apartment'
-            },
-           
+            }
           ]
         }
       ]
     },
 
-
-// rider Group
-{
-  id: 'rider-group',
-  type: 'group',
-  icon: 'icon-delivery', // optional custom icon
-  children: [
+    // rider Group
     {
-      id: 'manage-rider',
-      title: 'Riders',
-      type: 'collapse',
-      icon: 'material-icons-two-tone',
-      iconname: 'two_wheeler', // Rider/delivery icon
+      id: 'rider-group',
+      type: 'group',
+      icon: 'icon-delivery', // optional custom icon
       children: [
         {
-          id: 'all-riders',
-          title: 'All Riders',
-          type: 'item',
-          url: '/riders',
-          classes: 'nav-item',
+          id: 'manage-rider',
+          title: 'Riders',
+          type: 'collapse',
           icon: 'material-icons-two-tone',
-          iconname: 'two_wheeler' // Rider's vehicle
+          iconname: 'two_wheeler', // Rider/delivery icon
+          children: [
+            {
+              id: 'all-riders',
+              title: 'All Riders',
+              type: 'item',
+              url: '/riders',
+              classes: 'nav-item',
+              icon: 'material-icons-two-tone',
+              iconname: 'two_wheeler' // Rider's vehicle
+            }
+          ]
         }
       ]
-    }
-  ]
-},
-
-
-  
+    },
 
     {
       id: 'category-div-data',
