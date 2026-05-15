@@ -13,24 +13,24 @@ const useVendors = () => {
       setLoading(true);
       try {
         const config = {
-          headers: { Authorization: token ? `Bearer ${token}` : '' },
+          headers: { Authorization: token ? `Bearer ${token}` : '' }
         };
         // Try /vendors/list, fallback to /users/fetchuser and filter for vendors
         let vendorsList = [];
         try {
           // const res = await axios.get(`${API_URL}/vendors/list`, config);
-         await getAllVendors(true).then((response) => {    
+          await getAllVendors(true).then((response) => {
             if (response.success && Array.isArray(response.data)) {
-              vendorsList=response.data.map(v => ({ id: v.vendor_id, name: v.store_name }));
+              vendorsList = response.data.map((v) => ({ id: v.vendor_id, name: v.store_name }));
             }
           });
           console.log(vendorsList);
-          
+
           // vendorsList = res.data.vendors || [];
         } catch {
           // fallback
           const res = await axios.get(`${API_URL}/users/fetchuser`, config);
-          vendorsList = (res.data || []).filter(u => u.role_id === 4); // 4 = vendor
+          vendorsList = (res.data || []).filter((u) => u.role_id === 4); // 4 = vendor
         }
         setVendors(vendorsList);
       } catch (err) {
@@ -45,4 +45,4 @@ const useVendors = () => {
   return { vendors, loading };
 };
 
-export default useVendors; 
+export default useVendors;
