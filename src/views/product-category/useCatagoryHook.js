@@ -21,7 +21,13 @@ export default function useCatagoryHook() {
       setLoading(true);
       setError(null);
       try {
-        const response = await getAllCategories();
+        // Get role_id from localStorage (1 = superadmin, 3 = vendor)
+        let role_id = localStorage.getItem('role_id');
+        if (!role_id) {
+          // fallback: try user_role or similar if your app uses a different key
+          role_id = localStorage.getItem('user_role');
+        }
+        const response = await getAllCategories(role_id);
         let categories = response.success ? response.data || response : [];
         // Only keep allowed fields
         categories = categories.map((cat, idx) => ({

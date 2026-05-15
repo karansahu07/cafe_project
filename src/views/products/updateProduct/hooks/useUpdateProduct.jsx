@@ -144,7 +144,13 @@ export default function useUpdateProduct(form,data) {
 
 
   useEffect(() => {      
-    getAllCategories().then((response) => {
+    // Get role_id from localStorage or context (1 = superadmin, 3 = vendor)
+    let role_id = localStorage.getItem('role_id');
+    if (!role_id) {
+      // fallback: try user_role or similar if your app uses a different key
+      role_id = localStorage.getItem('user_role');
+    }
+    getAllCategories(role_id).then((response) => {
       if (response.success) setCategories(response.data);
     });
     productfetchBrands().then((response) => {
@@ -496,6 +502,7 @@ export default function useUpdateProduct(form,data) {
       if (values.description) formData.append("description", values.description);
       if (values.category) formData.append("category_id", values.category);
       if (values.sub_category) formData.append("sub_category", values.sub_category);
+      if (values.product_status) formData.append("product_status", values.product_status); // Add product status (active/inactive)
     
       //  if (productData.product_discount_percentage) formData.append("discount_percentage", productData.product_discount_percentage); 
      
@@ -532,13 +539,15 @@ export default function useUpdateProduct(form,data) {
       }
       // Gallery Images
       console.log(galleryImages);
+      const existingGalleryImageUrls = galleryImages
+        .filter(fileObj => !(fileObj instanceof File) && fileObj.image_path)
+        .map(fileObj => fileObj.image_path);
       galleryImages.forEach((fileObj) => {
         if (fileObj instanceof File) {
           formData.append("galleryImages", fileObj);
-        } else {
-          formData.append("existingGalleryImages", fileObj.image_path); // or fileObj.name based on your structure
         }
       });
+      formData.append("existingGalleryImages", JSON.stringify(existingGalleryImageUrls));
       // Attributes
       // const extraAttributes = [
       //   {key: "unit", value: values?.unit},

@@ -35,9 +35,11 @@ const getVendorFormConfig = () => ({
 //
 
 // Fetch all categories
-export const getAllCategories = async () => {
+export const getAllCategories = async (role_id) => {
   try {
-    const response = await axios.post('/category/fetch-categories', { is_web: true }, config);
+    const payload = { is_web: true };
+    if (role_id) payload.role_id = role_id;
+    const response = await axios.post('/category/fetch-categories', payload, config);
     return { success: true, data: response.data.categories || [] };
   } catch (error) {
     console.error('Failed to fetch categories:', error);
@@ -67,24 +69,45 @@ export const getAllProducts = async (options = {}) => {
     const vendorId = options?.vendorId;
 
     if (vendorId) {
-      const response = await axios.post(
-        "/products/getallproductsbyvendorID",
-        { vendor_id: vendorId },
-        config
-      );
+      const response = await axios.post('/products/getallproductsbyvendorID', { vendor_id: vendorId }, config);
+
+      // Normalize possible shapes: older API returned `product` or `products`,
+      // newer API may return `categories` with `products` inside each category.
+      if (response.data?.categories && Array.isArray(response.data.categories)) {
+        const flattened = response.data.categories.reduce((acc, cat) => {
+          if (Array.isArray(cat.products)) {
+            const mapped = cat.products.map((p) => ({ ...p, category_name: cat.category_name || cat.name }));
+            acc.push(...mapped);
+          }
+          return acc;
+        }, []);
+        return { success: true, data: flattened };
+      }
 
       return { success: true, data: response.data?.product || response.data?.products || [] };
     }
 
-    const response = await axios.post("/products/getproducts", {},config);
+    const response = await axios.post('/products/getproducts', {}, config);
+
+    // Normalize possible shapes: if backend now returns categories array
+    // with products nested, flatten them into a single products array.
+    if (response.data?.categories && Array.isArray(response.data.categories)) {
+      const flattened = response.data.categories.reduce((acc, cat) => {
+        if (Array.isArray(cat.products)) {
+          const mapped = cat.products.map((p) => ({ ...p, category_name: cat.category_name || cat.name }));
+          acc.push(...mapped);
+        }
+        return acc;
+      }, []);
+      return { success: true, data: flattened };
+    }
 
     return { success: true, data: response.data?.products || [] };
   } catch (error) {
     console.error('Failed to fetch products:', error);
     return { success: false, error: error.response?.data || 'Something went wrong' };
   }
-}
-
+};
 
 // ✅ Update a product
 export const updateProduct = async (formData) => {
@@ -95,7 +118,7 @@ export const updateProduct = async (formData) => {
     console.error('Failed to update product:', error);
     return { success: false, error: error.response?.data || error.message };
   }
-}
+};
 
 // ✅ Add a new product brand
 export const addProductBrand = async (formData) => {
@@ -106,7 +129,7 @@ export const addProductBrand = async (formData) => {
     console.error('Failed to add product brand:', error);
     return { success: false, error: error.response?.data || 'Failed to add product brand' };
   }
-}
+};
 
 // ✅ Update a product brand
 export const updateProductBrand = async (formData) => {
@@ -117,7 +140,7 @@ export const updateProductBrand = async (formData) => {
     console.error('Failed to update product brand:', error);
     return { success: false, error: error.response?.data || error.message };
   }
-}
+};
 
 // ✅ Delete a product brand
 export const deleteProductBrand = async (id) => {
@@ -131,7 +154,7 @@ export const deleteProductBrand = async (id) => {
     console.error('Failed to delete product brand:', error);
     return { success: false, error: error.response?.data || error.message };
   }
-}
+};
 
 // update category divs
 export const saveproductCategories = async (category, index) => {
@@ -143,7 +166,7 @@ export const saveproductCategories = async (category, index) => {
     console.error('Failed to update category', error);
     throw error;
   }
-}
+};
 
 // fetch product brands
 export const productfetchBrands = async () => {
@@ -156,214 +179,204 @@ export const productfetchBrands = async () => {
     console.error('Failed to fetch brands:', error);
     return { success: false, error: error.response?.data || error.message };
   }
-}
+};
 
 export const getShowSelectedCategory = async (index) => {
-    try {
-        const response = await axios.post("/dynamiccat/showselectedcategory", { index },config);
-        return { success: true, data: response.data.products };
-    } catch (error) {
-        console.error("Failed to fetch selected category:", error);
-        return { success: false, error: error.response?.data || "Something went wrong" };
-    }
+  try {
+    const response = await axios.post('/dynamiccat/showselectedcategory', { index }, config);
+    return { success: true, data: response.data.products };
+  } catch (error) {
+    console.error('Failed to fetch selected category:', error);
+    return { success: false, error: error.response?.data || 'Something went wrong' };
+  }
 };
 
 export const addBanner = async (formData) => {
-    try {
-        const response = await axios.post("/banners/app-banners", formData, configwithform);
-        return { success: true, data: response.data };
-    } catch (error) {
-        console.error("Failed to add banner:", error);
-        return { success: false, error: error?.response?.data || "Failed to add banner" };
-    }
+  try {
+    const response = await axios.post('/banners/app-banners', formData, configwithform);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Failed to add banner:', error);
+    return { success: false, error: error?.response?.data || 'Failed to add banner' };
+  }
 };
 
 export const addCategory = async (formData) => {
-    try {
-        const response = await axios.post(`/category/categories`, formData, configwithform);
-        return { success: true, data: response.data };
-    } catch (error) {
-        return { success: false, error: error.response?.data || error.message };
-    }
+  try {
+    const response = await axios.post(`/category/categories`, formData, configwithform);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.response?.data || error.message };
+  }
 };
 
 export const getAllBanners = async () => {
-    try {
-        const response = await axios.get("/banners/app-banners",config);
-        return { success: true, data: response.data.banners};
-    } catch (error) {
-        console.error("Failed to fetch products:", error);
-        return { success: false, error: error.response?.data || "Something went wrong" };
-    }
+  try {
+    const response = await axios.get('/banners/app-banners', config);
+    return { success: true, data: response.data.banners };
+  } catch (error) {
+    console.error('Failed to fetch products:', error);
+    return { success: false, error: error.response?.data || 'Something went wrong' };
+  }
 };
 
 export const deleteBanner = async (bannerId) => {
-  
-    try {
-      if (!bannerId) throw new Error("Banner ID is required");
-  
-        await axios.delete(`/banners/app-banners`, {
-        ...config,
-        data: { id: bannerId }, // ✅ Proper way to pass data in DELETE request
-      });
-      return { success: true };
-    } catch (error) {
-      console.error("Error deleting banner:", error);
-      return { success: false, message: error.response?.data?.message || "Failed to delete banner" };
-    }
-  };
+  try {
+    if (!bannerId) throw new Error('Banner ID is required');
 
-  export const deletecategory = async (categoryID) => {
-    console.log("id",categoryID)
-    try {
-      if (!categoryID) throw new Error("Category ID is required");
-  
-        await axios.delete(`/category/categories`, {
-        ...config,
-        data: { id: categoryID }, // ✅ Proper way to pass data in DELETE request
-      });
-      return { success: true };
-    } catch (error) {
-      console.error("Error deleting banner:", error);
-      return { success: false, message: error.response?.data?.message || "Failed to delete banner" };
-    }
-  };
-
-  export const updateBanner = async (payload) => {
-    try {
-      let formData;
-      if (payload instanceof FormData) {
-        formData = payload;
-      } else {
-        formData = new FormData();
-        if (!payload || !payload.id) throw new Error("Missing banner id");
-        formData.append("id", payload.id);
-        if (payload.title !== undefined) formData.append("title", payload.title);
-        if (payload.status !== undefined) {
-          const statusVal = typeof payload.status === 'boolean' ? (payload.status ? 1 : 0) : payload.status;
-          formData.append("status", statusVal);
-        }
-        if (payload.image_url instanceof File) {
-          formData.append("banner_image", payload.image_url);
-        }
-      }
-  
-      const response = await axios.put(`/banners/app-banners`, formData, configwithform);
-  
-      return { success: true, data: response.data.banner };
-    } catch (err) {
-      console.error("Update failed:", err.response?.data || err.message);
-      throw err;
-    }
-  };
-  export const updateCategory = async (selectedCategory) => {
-    try {
-      const formData = new FormData();
-      formData.append("id", selectedCategory.id);
-      formData.append("name", selectedCategory.name);
-      formData.append("description", selectedCategory.description);
-      // Do NOT send status/approval fields
-      if (selectedCategory.category_logo instanceof File) {
-        formData.append("category_logo", selectedCategory.category_logo); // New image
-      } else if (selectedCategory.category_logo) {
-        formData.append("existing_category_logo", selectedCategory.category_logo); // Retain existing image
-      }
-      const response = await axios.put(`/category/categories`, formData, configwithform);
-      return { success: true, data: response.data.category };
-    } catch (err) {
-      console.error("Update failed:", err.response?.data || err.message);
-      return { success: false, error: err.response?.data || err.message };
-    }
-  };
-  export const getAllUnverifiedUsers = async () => {
-    try {
-        const response = await axios.get(`/users/unverifiedUsers`, config); // ✅ Pass directly
-        return { success: true, vendors: response.data.vendors, delivery_partners: response.data.delivery_partners };
-    } catch (error) {
-        console.error("Error fetching unverified vendors:", error);
-        return { success: false, data: [] };
-    }
+    await axios.delete(`/banners/app-banners`, {
+      ...config,
+      data: { id: bannerId } // ✅ Proper way to pass data in DELETE request
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting banner:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to delete banner' };
+  }
 };
 
-export const verifyUser = async (userId,verification_status) => {
-    try {
-      const response = await axios.put(
-        `/users/verify-user`, 
-        { userId,verification_status },
-        config
-      );
-      console.log(response.data)
-      return response.data;
-    } catch (error) {
-      console.error("Verification failed:", error);
-      return { success: false };
+export const deletecategory = async (categoryID) => {
+  console.log('id', categoryID);
+  try {
+    if (!categoryID) throw new Error('Category ID is required');
+
+    await axios.delete(`/category/categories`, {
+      ...config,
+      data: { id: categoryID } // ✅ Proper way to pass data in DELETE request
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting banner:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to delete banner' };
+  }
+};
+
+export const updateBanner = async (payload) => {
+  try {
+    let formData;
+    if (payload instanceof FormData) {
+      formData = payload;
+    } else {
+      formData = new FormData();
+      if (!payload || !payload.id) throw new Error('Missing banner id');
+      formData.append('id', payload.id);
+      if (payload.title !== undefined) formData.append('title', payload.title);
+      if (payload.status !== undefined) {
+        const statusVal = typeof payload.status === 'boolean' ? (payload.status ? 1 : 0) : payload.status;
+        formData.append('status', statusVal);
+      }
+      if (payload.image_url instanceof File) {
+        formData.append('banner_image', payload.image_url);
+      }
     }
+
+    const response = await axios.put(`/banners/app-banners`, formData, configwithform);
+
+    return { success: true, data: response.data.banner };
+  } catch (err) {
+    console.error('Update failed:', err.response?.data || err.message);
+    throw err;
+  }
+};
+export const updateCategory = async (selectedCategory) => {
+  try {
+    const formData = new FormData();
+    formData.append('id', selectedCategory.id);
+    formData.append('name', selectedCategory.name);
+    formData.append('description', selectedCategory.description);
+    // Do NOT send status/approval fields
+    if (selectedCategory.category_logo instanceof File) {
+      formData.append('category_logo', selectedCategory.category_logo); // New image
+    } else if (selectedCategory.category_logo) {
+      formData.append('existing_category_logo', selectedCategory.category_logo); // Retain existing image
+    }
+    const response = await axios.put(`/category/categories`, formData, configwithform);
+    return { success: true, data: response.data.category };
+  } catch (err) {
+    console.error('Update failed:', err.response?.data || err.message);
+    return { success: false, error: err.response?.data || err.message };
+  }
+};
+export const getAllUnverifiedUsers = async () => {
+  try {
+    const response = await axios.get(`/users/unverifiedUsers`, config); // ✅ Pass directly
+    return { success: true, vendors: response.data.vendors, delivery_partners: response.data.delivery_partners };
+  } catch (error) {
+    console.error('Error fetching unverified vendors:', error);
+    return { success: false, data: [] };
+  }
+};
+
+export const verifyUser = async (userId, verification_status) => {
+  try {
+    const response = await axios.put(`/users/verify-user`, { userId, verification_status }, config);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Verification failed:', error);
+    return { success: false };
+  }
 };
 
 export const getAllDiscounts = async () => {
-    try {
-        const response = await axios.get("/productdiscount/get-discounts", config); // remove empty object; only config needed
-        return response.data;
-    } catch (error) {
-        console.error("❌ Failed to fetch discounts:", error);
-        return { success: false, error: error.response?.data || "Something went wrong" };
-    }
+  try {
+    const response = await axios.get('/productdiscount/get-discounts', config); // remove empty object; only config needed
+    return response.data;
+  } catch (error) {
+    console.error('❌ Failed to fetch discounts:', error);
+    return { success: false, error: error.response?.data || 'Something went wrong' };
+  }
 };
 
-
 export const saveOrUpdateDiscount = async (selected) => {
-    try {
-  
-      const formData = new FormData();
-      Object.entries(selected).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-  
-      const url = selected.id
-        ? `/productdiscount/update-discount`
-        : `/productdiscount/add-update-discount`;
-  
-      const method = selected.id ? "put" : "post";
-  
-      const res = await axios[method](url, formData, config);
-      return { success: true, data: res.data };
-    } catch (err) {
-      return {
-        success: false,
-        error: err.response?.data || err.message,
-      };
-    }
-  };
-  
-  
+  try {
+    const formData = new FormData();
+    Object.entries(selected).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    const url = selected.id ? `/productdiscount/update-discount` : `/productdiscount/add-update-discount`;
+
+    const method = selected.id ? 'put' : 'post';
+
+    const res = await axios[method](url, formData, config);
+    return { success: true, data: res.data };
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data || err.message
+    };
+  }
+};
+
 //   Delete a product discount
 export const deleteDiscount = async (discount_id) => {
-    try {
-      const token = localStorage.getItem("token");
-  
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        data: { discount_id }, // 👈 send id in request body
-      };
-  
-      await axios.delete(`/productdiscount/delete-discount`, config);
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err.response?.data || err.message };
-    }
-  };
+  try {
+    const token = localStorage.getItem('token');
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      data: { discount_id } // 👈 send id in request body
+    };
+
+    await axios.delete(`/productdiscount/delete-discount`, config);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.response?.data || err.message };
+  }
+};
 
 export const updateSubCategory = async (formData) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     const config = {
       headers: {
-        Authorization: token ? `Bearer ${token}` : "",
-        "Content-Type": "multipart/form-data",
-      },
+        Authorization: token ? `Bearer ${token}` : '',
+        'Content-Type': 'multipart/form-data'
+      }
     };
     const response = await axios.put(`/subcategory/subcategories`, formData, config);
     return { success: true, data: response.data.subcategories };
@@ -374,10 +387,10 @@ export const updateSubCategory = async (formData) => {
 
 export const deleteSubCategory = async (subcategoryId) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     const config = {
-      headers: { Authorization: token ? `Bearer ${token}` : "" },
-      data: { id: subcategoryId },
+      headers: { Authorization: token ? `Bearer ${token}` : '' },
+      data: { id: subcategoryId }
     };
     await axios.delete(`/subcategory/subcategories`, config);
     return { success: true };
@@ -401,37 +414,33 @@ export const updateCategoryStatus = async (categoryId, status) => {
 
 export const addProduct = async (formData) => {
   try {
-  
     const config = {
       headers: {
-        Authorization: token ? `Bearer ${token}` : "",
-        "Content-Type": "multipart/form-data",
-      },
+        Authorization: token ? `Bearer ${token}` : '',
+        'Content-Type': 'multipart/form-data'
+      }
     };
     const response = await axios.post(`/products/products`, formData, config);
     return { success: true, data: response.data };
   } catch (error) {
     console.log(error);
-    
+
     return { success: false, error: error.response?.data || error.message };
   }
 };
 
-
-
 export const getProductById = async (id) => {
   try {
-    const response = await axios.post(`/products/productbyid`,{id},config);    
+    const response = await axios.post(`/products/productbyid`, { id }, config);
     return response.data;
   } catch (error) {
     return { success: false, message: error.message, data: [] };
   }
 };
 
-export const getAllVendors = async (active = false) => {   
+export const getAllVendors = async (active = false) => {
   try {
-    
-    const response = await axios.get(`/vendors/getallvendorsforadmin${active ? "?filter=active":""}`,config);
+    const response = await axios.get(`/vendors/getallvendorsforadmin${active ? '?filter=active' : ''}`, config);
     return response.data;
   } catch (error) {
     return { success: false, message: error.message, data: [] };
@@ -447,10 +456,9 @@ export const getVendorById = async (id) => {
   }
 };
 
-export const getAllRiders = async (active = false) => {   
+export const getAllRiders = async (active = false) => {
   try {
-    
-    const response = await axios.get(`/riders/getallridersforadmin${active ? "?filter=active":""}`,config);
+    const response = await axios.get(`/riders/getallridersforadmin${active ? '?filter=active' : ''}`, config);
     return response.data;
   } catch (error) {
     return { success: false, message: error.message, data: [] };
@@ -502,9 +510,6 @@ export const deleteVendorType = async (id) => {
   }
 };
 
-
-
-
 // Toggle vendor status
 export const updateVendorStatus = async (vendorId, newStatus) => {
   try {
@@ -514,10 +519,9 @@ export const updateVendorStatus = async (vendorId, newStatus) => {
       {
         user_id: vendorId,
         status: newStatus,
-        role_id: 1,
+        role_id: 1
       },
-     config
-      
+      config
     );
     return { success: true, data: response.data };
   } catch (error) {
@@ -541,10 +545,9 @@ export const updateRiderStatus = async (riderId, newStatus) => {
       {
         user_id: riderId,
         status: newStatus,
-        role_id: 1,
+        role_id: 1
       },
-     config
-      
+      config
     );
     return { success: true, data: response.data };
   } catch (error) {
@@ -601,8 +604,8 @@ export const addBankDetails = async (formData) => {
 export const deleteProduct = async (product_ids) => {
   try {
     const response = await axios.delete(`/products/products`, {
-      ...config,             // includes your headers
-      data: { product_ids }  // includes your body (important!)
+      ...config, // includes your headers
+      data: { product_ids } // includes your body (important!)
     });
     return { success: true, data: response.data };
   } catch (error) {
@@ -613,7 +616,7 @@ export const deleteProduct = async (product_ids) => {
 // Vendor dashboard analytics by date range (hourly if same day, else daily)
 export const getVendorAnalytics = async (vendor_Id, start_date, end_date) => {
   try {
-    const payload = { vendor_Id, start_date, end_date,role_id:3, };
+    const payload = { vendor_Id, start_date, end_date, role_id: 3 };
     const response = await axios.post(`/vendors/vendordashboard-analytics`, payload, config);
     return { success: true, data: response.data || [] };
   } catch (error) {

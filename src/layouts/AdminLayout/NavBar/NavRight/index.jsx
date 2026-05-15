@@ -10,13 +10,13 @@ import useVendorNotifications from '../../../../hooks/useVendorNotifications';
 
 // assets
 import logo from 'assets/images/logo.svg';
-import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useNavigate } from "react-router-dom";
 
 // -----------------------|| NAV RIGHT ||-----------------------//
 
 export default function NavRight() {
-  const navigate = useNavigate(); // Initialize navigate function
-  const username=localStorage.getItem("username");
+  const navigate = useNavigate();
+  const username = localStorage.getItem("username");
   const {
     isVendor,
     permission,
@@ -34,12 +34,6 @@ export default function NavRight() {
 
   const latestNotifications = useMemo(() => notifications.slice(0, 8), [notifications]);
 
-  // const role=localStorage.getItem("role");
-  //console.log("All Local Storage Items:");
-  Object.entries(localStorage).forEach(([key, value]) => {
-    //console.log(`${key}: ${value}`);
-  });
-
   const handleNotificationClick = (item) => {
     if (!item?.id) return;
     markAsRead(item.id);
@@ -55,9 +49,9 @@ export default function NavRight() {
   const handleLogout = async () => {
     await unregisterDeviceToken();
     localStorage.clear();
-    navigate("/login"); // Change the path if needed
+    navigate("/login");
   };
-  
+
   return (
     <ListGroup as="ul" bsPrefix=" " className="list-unstyled">
       <ListGroup.Item as="li" bsPrefix=" " className="pc-h-item">
@@ -72,14 +66,35 @@ export default function NavRight() {
           </Dropdown.Menu>
         </Dropdown>
       </ListGroup.Item>
+
       <ListGroup.Item as="li" bsPrefix=" " className="pc-h-item">
         <Dropdown align="end">
           <Dropdown.Toggle as="a" variant="link" className="pc-head-link arrow-none me-0">
-            <FeatherIcon icon="bell" />
-            {unreadCount > 0 ? (
-              <Badge bg="danger" pill style={{ marginLeft: 6 }}>{unreadCount}</Badge>
-            ) : null}
+            <span style={{ position: 'relative', display: 'inline-flex' }}>
+              <FeatherIcon icon="bell" />
+              {unreadCount > 0 ? (
+                <Badge
+                  bg="danger"
+                  pill
+                  style={{
+                    position: 'absolute',
+                    top: '-6px',
+                    right: '-8px',
+                    fontSize: '10px',
+                    minWidth: '18px',
+                    height: '18px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 4px'
+                  }}
+                >
+                  {unreadCount}
+                </Badge>
+              ) : null}
+            </span>
           </Dropdown.Toggle>
+
           <Dropdown.Menu className="dropdown-menu-end pc-h-dropdown" style={{ width: 360, maxWidth: '90vw' }}>
             <div className="px-3 pt-2 pb-2 d-flex justify-content-between align-items-center">
               <strong>Notifications</strong>
@@ -128,6 +143,7 @@ export default function NavRight() {
           </Dropdown.Menu>
         </Dropdown>
       </ListGroup.Item>
+
       <ListGroup.Item as="li" bsPrefix=" " className="pc-h-item">
         <Dropdown className="drp-user">
           <Dropdown.Toggle as="a" variant="link" className="pc-head-link arrow-none me-0 user-name">
@@ -139,7 +155,7 @@ export default function NavRight() {
           <Dropdown.Menu className="dropdown-menu-end pc-h-dropdown">
             <Dropdown.Header className="pro-head">
             </Dropdown.Header>
-            <Link to="#" className="dropdown-item"onClick={handleLogout}>
+            <Link to="#" className="dropdown-item" onClick={handleLogout}>
               <i className="material-icons-two-tone">chrome_reader_mode</i> Logout
             </Link>
           </Dropdown.Menu>
