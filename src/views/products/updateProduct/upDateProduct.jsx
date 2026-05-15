@@ -716,11 +716,14 @@ const UpdateProduct = () => {
                     </Col>
                     <Col md={6} xs={24}>
                   <Form.Item
-                    label="Stock Quantity"
-                    name="stock"
-                    rules={[{ required: true, message: "Please enter stock quantity" }]}
+                    label="Product Status"
+                    name="product_status"
+                    rules={[{ required: true, message: "Please select product status" }]}
                   >
-                    <Input type="number" min={0} placeholder="Available stock" />
+                    <Select placeholder="Select status">
+                      <Select.Option value="active">Active</Select.Option>
+                      <Select.Option value="inactive">Inactive</Select.Option>
+                    </Select>
                   </Form.Item>
                 </Col>
                   </>

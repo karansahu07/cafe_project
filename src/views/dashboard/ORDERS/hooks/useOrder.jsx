@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 import { getResolvedRoleId, getResolvedVendorId } from '../../../../utils/authSession';
 
 export const getOrderStatus = (status) => {
+  if (status == null) return { text: 'Pending', color: 'orange' };
+
   if (typeof status === 'string') {
     const normalized = status.trim().toLowerCase();
     switch (normalized) {

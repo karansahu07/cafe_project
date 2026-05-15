@@ -106,8 +106,15 @@ const ProductUpdateModal = ({
                     <Select.Option value="0">No</Select.Option>
                   </Select>
                 </Form.Item>
-                <Form.Item label="Stock Quantity">
-                  <Input type="number" name="stock" value={formState.stock || ''} onChange={handleFormChange} />
+                <Form.Item label="Product Status">
+                  <Select
+                    name="product_status"
+                    value={formState.product_status || 'active'}
+                    onChange={value => handleFormChange({ target: { name: 'product_status', value } })}
+                  >
+                    <Select.Option value="active">Active</Select.Option>
+                    <Select.Option value="inactive">Inactive</Select.Option>
+                  </Select>
                 </Form.Item>
               </div>
               <div className="col-md-6">
