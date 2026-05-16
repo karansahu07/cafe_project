@@ -394,6 +394,11 @@ export default function useAddProductHook(form,data) {
       if (values.product_status) {
         formData.append("product_status", values.product_status);
       }
+
+      // Add highlight labels (array of strings) if provided
+      if (values.highlight && Array.isArray(values.highlight) && values.highlight.length > 0) {
+        formData.append("highlight", JSON.stringify(values.highlight));
+      }
   
       formData.append("fast_delivery_available", values.fast_delivery_available ? 1 : 0);
   

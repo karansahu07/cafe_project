@@ -219,22 +219,8 @@ const ProductRegistration = ({ data }) => {
                     </Form.Item>
                   )}
                 </Col>
-                <Col md={6} xs={24}>
-                  <Form.Item
-                    label="Brand Name"
-                    name="product_brand"
-                    // rules={[{ required: true, message: "Please select a brand" }]}
-                  >
-                    <Select placeholder="Select Brand" showSearch optionFilterProp="children">
-                      {brands.map((brand) => (
-                        <Option key={brand.id} value={String(brand.id)}>
-                          {brand.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col md={6} xs={24}>
+                {/* Brand removed from frontend — backend will accept if provided */}
+                <Col md={12} xs={24}>
                   <Form.Item label="Product Name" name="name" rules={[{ required: true, message: 'Please enter product name' }]}>
                     <Input placeholder="Product Name" />
                   </Form.Item>
@@ -248,7 +234,7 @@ const ProductRegistration = ({ data }) => {
                     <Input.TextArea rows={3} placeholder="Product Description" />
                   </Form.Item>
                 </Col>
-                <Col md={6} xs={24}>
+                <Col md={12} xs={24}>
                   <Form.Item label="Category" name="category" rules={[{ required: true, message: 'Please select a category' }]}>
                     <Select placeholder="Select Category" showSearch optionFilterProp="children" onChange={handleCategoryChange}>
                       {categories.map((cat) => (
@@ -259,21 +245,7 @@ const ProductRegistration = ({ data }) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col md={6} xs={24}>
-                  <Form.Item
-                    label="Subcategory"
-                    name="sub_category"
-                    // rules={[{ required: true, message: "Please select a subcategory" }]}
-                  >
-                    <Select placeholder="Select Subcategory" showSearch optionFilterProp="children">
-                      {subCategories.map((sub) => (
-                        <Option key={sub.id} value={sub.id}>
-                          {sub.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
+                {/* Subcategory selection removed from frontend — optional for backend */}
 
                 <Col md={6} xs={24}>
                   <Form.Item
@@ -454,26 +426,7 @@ const ProductRegistration = ({ data }) => {
                   </Form.Item>
                 </Col>
 
-                {/* Variants Section */}
-                <Col md={24} xs={24}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', padding: '8px 0' }}>
-                    <Form.Item name="has_variants" valuePropName="checked" style={{ margin: 0, marginRight: 12 }}>
-                      <Checkbox
-                        checked={hasVariants && hasAddOns}
-                        onChange={(e) => {
-                          setHasVariants(e.target.checked);
-                          setHasAddOns(e.target.checked);
-                        }}
-                      />
-                    </Form.Item>
-                    <div>
-                      <div style={{ fontWeight: 500, marginBottom: 4 }}>
-                        is this product is rasturant product or having variants and addons?{' '}
-                      </div>
-                      <div style={{ fontSize: 12, color: '#666' }}>If you want to add variants and addons for this product</div>
-                    </div>
-                  </div>
-                </Col>
+                {/* Restaurant/variants checkbox removed from frontend per request */}
                 {hasVariants && (
                   <Col md={24} xs={24}>
                     <ProductVariants
@@ -682,6 +635,11 @@ const ProductRegistration = ({ data }) => {
                           <Select.Option value="active">Active</Select.Option>
                           <Select.Option value="inactive">Inactive</Select.Option>
                         </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col md={6} xs={24}>
+                      <Form.Item label="Highlight" name="highlight">
+                        <Select mode="tags" placeholder="Add highlights (e.g. extra masala, extra ginger)" tokenSeparators={[',']} style={{ width: '100%' }} />
                       </Form.Item>
                     </Col>
                   </>

@@ -207,7 +207,6 @@ const UpdateProduct = () => {
     <div className="p2 d-flex justify-content-center">
       <div style={{ width: '100%', maxWidth: 700 }}>
         <Card className="borderless w-100">
-          {/* {`${hasvarientcheck}`} */}
           <Card.Body>
             <h4 className="mb-3 f-w-400 text-center">Update Product</h4>
             <Form
@@ -217,7 +216,17 @@ const UpdateProduct = () => {
               autoComplete="off"
             >
               <Row gutter={16}>
-                <Col md={24} xs={24}>
+                {/* {`${hasvarientcheck}`} */}
+                <Col md={12} xs={24}>
+                  <Form.Item
+                    label="Product Name"
+                    name="name"
+                    rules={[{ required: true, message: "Please enter product name" }]}
+                  >
+                    <Input placeholder="Product Name" />
+                  </Form.Item>
+                </Col>
+                <Col md={12} xs={24}>
                   {isVendorUser ? (
                     <Form.Item label="Vendor" required name={"vendor"}>
                       <Input value={loggedInVendorId ? `Vendor #${loggedInVendorId}` : 'Vendor not resolved'} disabled />
@@ -236,9 +245,7 @@ const UpdateProduct = () => {
                         showSearch
                         optionFilterProp="children"
                         onClear={() => handleVendorChange(null)}
-                        filterOption={(input, option) =>
-                          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
+                        filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         style={{ width: '100%' }}
                       >
                         {vendors.map((vendor) => (
@@ -247,28 +254,6 @@ const UpdateProduct = () => {
                       </Select>
                     </Form.Item>
                   )}
-                </Col>
-                <Col md={6} xs={24}>
-                  <Form.Item
-                    label="Brand Name"
-                    name="product_brand"
-                    // rules={[{ required: true, message: "Please select a brand" }]}
-                  >
-                    <Select placeholder="Select Brand" showSearch optionFilterProp="children">
-                      {brands.map((brand) => (
-                        <Option key={brand.id} value={brand.id}>{brand.name}</Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col md={6} xs={24}>
-                  <Form.Item
-                    label="Product Name"
-                    name="name"
-                    rules={[{ required: true, message: "Please enter product name" }]}
-                  >
-                    <Input placeholder="Product Name" />
-                  </Form.Item>
                 </Col>
                 <Col md={12} xs={24}>
                   <Form.Item
@@ -297,19 +282,7 @@ const UpdateProduct = () => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col md={6} xs={24}>
-                  <Form.Item
-                    label="Subcategory"
-                    name="sub_category"
-                    // rules={[{ required: true, message: "Please select a subcategory" }]}
-                  >
-                    <Select placeholder="Select Subcategory" showSearch optionFilterProp="children">
-                      {subCategories.map((sub) => (
-                        <Option key={sub.id} value={sub.id}>{sub.name}</Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
+                {/* Subcategory removed from frontend — optional for backend */}
 
              
 
@@ -467,70 +440,7 @@ const UpdateProduct = () => {
 
                
               
-                {/* Variants Section */}
-                <Col md={24} xs={24}> 
-                
-                <div style={{ display: 'flex', alignItems: 'flex-start', padding: '8px 0' }}>
-                            <Form.Item name="has_variants" valuePropName="checked" style={{ margin: 0, marginRight: 12 }}>
-                              <Checkbox 
-                                checked={checkvarient()}
-                                onChange={(e) => {setHasVariants(e.target.checked); setHasAddOns(e.target.checked)}}
-                              />
-                            </Form.Item>
-                            <div>
-                              <div style={{ fontWeight: 500, marginBottom: 4 }}>is this product is rasturant product or having variants and addons? </div>
-                              <div style={{ fontSize: 12, color: '#666' }}>If you want to add variants and addons for this product</div>
-                            </div>
-                          </div>
-                            </Col>
-                {hasvarientcheck && (
-                  <Col md={24} xs={24}>
-                    <ProductVariants
-                      variants={variants}
-                      editingVariantIdx={editingVariantIdx}
-                      newVariantDraft={newVariantDraft}
-                      setNewVariantDraft={setNewVariantDraft}
-                      startEditVariant={startEditVariant}
-                      saveEditVariant={saveEditVariant}
-                      cancelEditVariant={cancelEditVariant}
-                      saveNewVariant={saveNewVariant}
-                      removeVariant={removeVariant}
-                      productPrice={form.getFieldValue('price')}
-                      productDiscountPrice={form.getFieldValue('discount_price')}
-                    />
-                  </Col>
-                )}
-               
-{hasvarientcheck && (
-  <Col md={24} xs={24}>
-    <Addons
-      addons={addons}
-      editingAddonIdx={editingAddonIdx}
-      newAddonDraft={newAddonDraft}
-      setNewAddonDraft={setNewAddonDraft}
-      startEditAddon={startEditAddon}
-      saveEditAddon={saveEditAddon}
-      cancelEditAddon={cancelEditAddon}
-      saveNewAddon={saveNewAddon}
-      removeAddon={removeAddon}
-    />
-  </Col>
-)}
-{hasvarientcheck && (
-  <Col md={6} xs={24}>
-    <Form.Item
-      label="Is this product available"
-      name="is_available"
-      valuePropName="checked"
-      initialValue={false}
-    >
-      <Switch
-        checkedChildren="Yes"
-        unCheckedChildren="No"
-      />
-    </Form.Item>
-  </Col>
-)}
+                {/* Restaurant/variants checkbox and related UI removed from frontend per request */}
                 {/* Unit/Quantity fields */}
                 {!hasvarientcheck && (
                   <>
@@ -724,6 +634,11 @@ const UpdateProduct = () => {
                       <Select.Option value="active">Active</Select.Option>
                       <Select.Option value="inactive">Inactive</Select.Option>
                     </Select>
+                  </Form.Item>
+                </Col>
+                <Col md={6} xs={24}>
+                  <Form.Item label="Highlight" name="highlight">
+                    <Select mode="tags" placeholder="Add highlights (e.g. extra masala, extra ginger)" tokenSeparators={[',']} style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
                   </>
