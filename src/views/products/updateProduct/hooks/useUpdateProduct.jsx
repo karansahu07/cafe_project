@@ -91,7 +91,6 @@ export default function useUpdateProduct(form,data) {
             price: data.price,
             enable_discount: data.discount_percent > 0 ? true : false,
             discount_price: data.discount_price || data.discounted_value,
-
             discount_percent: data.discount_percent,
           
             quantity: data.product_quantity,
@@ -101,6 +100,8 @@ export default function useUpdateProduct(form,data) {
             stock: data?.stock,
             category: data?.category_id,
             sub_category: data?.sub_category,
+
+            product_status: data?.product_status || 'active',
           
             product_brand: data?.brand_id,
             vendor: isVendorUser ? loggedInVendorId : data?.vendor_id,
@@ -503,6 +504,10 @@ export default function useUpdateProduct(form,data) {
       if (values.category) formData.append("category_id", values.category);
       if (values.sub_category) formData.append("sub_category", values.sub_category);
       if (values.product_status) formData.append("product_status", values.product_status); // Add product status (active/inactive)
+      // Add highlight labels (array of strings) if provided
+      if (values.highlight && Array.isArray(values.highlight) && values.highlight.length > 0) {
+        formData.append("highlight", JSON.stringify(values.highlight));
+      }
     
       //  if (productData.product_discount_percentage) formData.append("discount_percentage", productData.product_discount_percentage); 
      
