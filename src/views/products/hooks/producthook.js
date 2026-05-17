@@ -131,7 +131,7 @@ export default function useProductTable() {
 
   useEffect(() => {
     fetchData({ pagination, sorter });
-  }, []);
+  }, [fetchData, pagination.current, pagination.pageSize, sorter]);
   // }, [fetchData, pagination.current, pagination.pageSize, sorter, filters]);
 
   const onTableChange = (newPagination, filtersTable, newSorter) => {

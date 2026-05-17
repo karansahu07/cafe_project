@@ -4,37 +4,32 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { set } from 'lodash-es';
 
 function FilterControls({
-  // nameFilter, setNameFilter,
-  // categoryFilter, setCategoryFilter,
-  // subCategoryFilter, setSubCategoryFilter,
-  // isFeaturedFilter, setIsFeaturedFilter,
-  // isTodayDealFilter, setIsTodayDealFilter,
+  // parent setters for filters
+  setNameFilter,
+  setCategoryFilter,
   categories, subCategories,
-  filters={name:"", categories:[], subCategories:[], isFeatured:null, isTodayDeal:null},
+  filters={name:"", categories:[]},
   handleResetFilters,
   vertical = false,
   setDrawerOpen,
   setFilters=()=>{},
- 
 }) {
 
-  const [nameFilter, setNameFilter] = useState(filters.name ||"");
-  const [categoryFilter, setCategoryFilter] = useState(filters.categories || []);
-  const [subCategoryFilter, setSubCategoryFilter] = useState(filters.subCategories || []);
-  const [isFeaturedFilter, setIsFeaturedFilter] = useState(filters.isFeatured ?? null);
-  const [isTodayDealFilter, setIsTodayDealFilter] = useState(filters.isTodayDeal ?? null);
+  const [nameFilter, setLocalNameFilter] = useState(filters.name ||"");
+  const [categoryFilter, setLocalCategoryFilter] = useState(filters.categories || []);
+  const [subCategoryFilter, setLocalSubCategoryFilter] = useState([]);
   // ✅ Common Apply Function
   const handleApplyFilters = () => {
     const filters = {
       name: nameFilter || "",
       categories: categoryFilter || [],
-      subCategories: subCategoryFilter || [],
-      isFeatured: isFeaturedFilter ?? null,
-      isTodayDeal: isTodayDealFilter ?? null,
     };
 
-  setFilters(filters);
-    
+    // update parent-level filter state so product list can refresh
+    if (typeof setNameFilter === 'function') setNameFilter(filters.name);
+    if (typeof setCategoryFilter === 'function') setCategoryFilter(filters.categories);
+    // compatibility hook
+    setFilters(filters);
     console.log("Applied Filters:", filters);
 
     if (vertical && setDrawerOpen) {
@@ -50,7 +45,7 @@ function FilterControls({
           className="custom-filter-input"
           placeholder="Search by product name"
           value={nameFilter}
-          onChange={e => setNameFilter(e.target.value)}
+          onChange={e => setLocalNameFilter(e.target.value)}
           allowClear
         />
         <Select
@@ -63,48 +58,13 @@ function FilterControls({
           placeholder="Category"
           style={{ width: '100%' }}
           value={categoryFilter}
-          onChange={setCategoryFilter}
+          onChange={setLocalCategoryFilter}
         >
           {categories.map(cat => (
             <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
           ))}
         </Select>
-        <Select
-          mode="multiple"
-          allowClear
-          showSearch
-          filterOption={(input, option) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-          placeholder="Subcategory"
-          style={{ width: '100%' }}
-          value={subCategoryFilter}
-          onChange={setSubCategoryFilter}
-        >
-          {subCategories.map(sub => (
-            <Select.Option key={sub.id} value={sub.id}>{sub.name}</Select.Option>
-          ))}
-        </Select>
-        <Select
-          allowClear
-          placeholder="Featured"
-          style={{ width: '100%' }}
-          value={isFeaturedFilter}
-          onChange={setIsFeaturedFilter}
-        >
-          <Select.Option value={1}>Yes</Select.Option>
-          <Select.Option value={0}>No</Select.Option>
-        </Select>
-        <Select
-          allowClear
-          placeholder="Today Deal"
-          style={{ width: '100%' }}
-          value={isTodayDealFilter}
-          onChange={setIsTodayDealFilter}
-        >
-          <Select.Option value={1}>Yes</Select.Option>
-          <Select.Option value={0}>No</Select.Option>
-        </Select>
+        {/* Subcategory, Featured and Today Deal filters removed as per UI requirement */}
         <AntButton
           type="primary"
           block
@@ -134,7 +94,7 @@ function FilterControls({
           className="custom-filter-input"
           placeholder="Search by product name"
           value={nameFilter}
-          onChange={e => setNameFilter(e.target.value)}
+          onChange={e => setLocalNameFilter(e.target.value)}
           allowClear
         />
       </Col>
@@ -149,55 +109,14 @@ function FilterControls({
           placeholder="Category"
           style={{ width: '100%' }}
           value={categoryFilter}
-          onChange={setCategoryFilter}
+          onChange={setLocalCategoryFilter}
         >
           {categories.map(cat => (
             <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
           ))}
         </Select>
       </Col>
-      <Col span={4}>
-        <Select
-          mode="multiple"
-          allowClear
-          showSearch
-          filterOption={(input, option) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-          placeholder="Subcategory"
-          style={{ width: '100%' }}
-          value={subCategoryFilter}
-          onChange={setSubCategoryFilter}
-        >
-          {subCategories.map(sub => (
-            <Select.Option key={sub.id} value={sub.id}>{sub.name}</Select.Option>
-          ))}
-        </Select>
-      </Col>
-      <Col span={3}>
-        <Select
-          allowClear
-          placeholder="Featured"
-          style={{ width: '100%' }}
-          value={isFeaturedFilter}
-          onChange={setIsFeaturedFilter}
-        >
-          <Select.Option value={1}>Yes</Select.Option>
-          <Select.Option value={0}>No</Select.Option>
-        </Select>
-      </Col>
-      <Col span={3}>
-        <Select
-          allowClear
-          placeholder="Today Deal"
-          style={{ width: '100%' }}
-          value={isTodayDealFilter}
-          onChange={setIsTodayDealFilter}
-        >
-          <Select.Option value={1}>Yes</Select.Option>
-          <Select.Option value={0}>No</Select.Option>
-        </Select>
-      </Col>
+      {/* Removed Subcategory, Featured and Today Deal columns from desktop filters */}
       <AntButton
         type="primary"
         style={{ marginTop: 16 }}

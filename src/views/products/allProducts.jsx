@@ -111,24 +111,6 @@ export const productTableColumns = (BASE_URL, handleUpdate, handleDelete, pagina
     ),
   },
   {
-    title: 'Featured',
-    dataIndex: 'is_featured',
-    render: (val, record) => (
-      <Switch checked={val === 1}  style={{ backgroundColor: val === 1 ? '#961818' : undefined }} onChange={(checked) => handleToggleFeatured(record.id, checked ? 1 : 0)} />
-    ),
-    sorter: true,
-    width: 100,
-  },
-  {
-    title: 'Today Deal',
-    dataIndex: 'is_today_deal',
-    render: (val, record) => (
-      <Switch checked={val === 1}  style={{ backgroundColor: val === 1 ? '#961818' : undefined }} onChange={(checked) => handleToggleTodayDeal(record.id, checked ? 1 : 0)} />
-    ),
-    sorter: true,
-    width: 110,
-  },
-  {
     title: 'Featured Image',
     dataIndex: 'featured_image',
     render: (img) => img ? <img src={`${BASE_URL}${img}`} alt="Product" width="50" height="50" /> : 'No Image',
@@ -225,9 +207,7 @@ const ProductList = () => {
   const handleResetFilters = () => {
     setNameFilter("");
     setCategoryFilter([]);
-    setSubCategoryFilter([]);
-    setIsFeaturedFilter(undefined);
-    setIsTodayDealFilter(undefined);
+    // Removed subcategory/featured/todayDeal filters from UI; keep category and name reset
   };
 
   return (
@@ -240,14 +220,7 @@ const ProductList = () => {
             setNameFilter={setNameFilter}
             categoryFilter={categoryFilter}
             setCategoryFilter={setCategoryFilter}
-            subCategoryFilter={subCategoryFilter}
-            setSubCategoryFilter={setSubCategoryFilter}
-            isFeaturedFilter={isFeaturedFilter}
-            setIsFeaturedFilter={setIsFeaturedFilter}
-            isTodayDealFilter={isTodayDealFilter}
-            setIsTodayDealFilter={setIsTodayDealFilter}
             categories={categories}
-            subCategories={subCategories}
             handleResetFilters={handleResetFilters}
           />
         ) : (
@@ -268,14 +241,7 @@ const ProductList = () => {
                 setNameFilter={setNameFilter}
                 categoryFilter={categoryFilter}
                 setCategoryFilter={setCategoryFilter}
-                subCategoryFilter={subCategoryFilter}
-                setSubCategoryFilter={setSubCategoryFilter}
-                isFeaturedFilter={isFeaturedFilter}
-                setIsFeaturedFilter={setIsFeaturedFilter}
-                isTodayDealFilter={isTodayDealFilter}
-                setIsTodayDealFilter={setIsTodayDealFilter}
                 categories={categories}
-                subCategories={subCategories}
                 handleResetFilters={handleResetFilters}
                 vertical
               />
