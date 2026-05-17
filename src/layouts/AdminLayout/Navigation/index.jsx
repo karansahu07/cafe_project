@@ -80,6 +80,8 @@ import * as actionType from 'store/actions';
 import { getResolvedRoleId, getResolvedUserId } from '../../../utils/authSession';
 // assets
 import logo from 'assets/images/logo.svg';
+import useVendorNotifications from '../../../hooks/useVendorNotifications';
+import { Badge as AntBadge } from 'antd';
 
 const { Sider } = Layout;
 const { Title, Text } = Typography;
@@ -107,23 +109,32 @@ const getIcon = (iconname) => {
 };
 
 // Convert menu items to Ant Design format
-const convertMenuItems = (items) => {
+const convertMenuItems = (items, unreadCount = 0) => {
   return items.flatMap(item => {
     if (item.type === 'group') {
       // Skip group titles, just return their children
-      return item.children ? convertMenuItems(item.children) : [];
+      return item.children ? convertMenuItems(item.children, unreadCount) : [];
     } else if (item.type === 'collapse') {
       return [{
         key: item.id,
         icon: getIcon(item.iconname),
         label: item.title,
-        children: item.children ? convertMenuItems(item.children) : []
+        children: item.children ? convertMenuItems(item.children, unreadCount) : []
       }];
     } else if (item.type === 'item') {
+      // show badge for notification-related items
+      const isNotificationItem = String(item.id || '').toLowerCase().includes('notif') || String(item.iconname || '').toLowerCase().includes('notification');
+      const baseLabel = item.url ? <Link to={item.url}>{item.title}</Link> : item.title;
+      const label = isNotificationItem && unreadCount > 0 ? (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <span style={{ display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{baseLabel}</span>
+          <AntBadge count={unreadCount} />
+        </div>
+      ) : baseLabel;
       return [{
         key: item.id,
         icon: getIcon(item.iconname),
-        label: item.url ? <Link to={item.url}>{item.title}</Link> : item.title,
+        label,
         url: item.url
       }];
     }
@@ -161,6 +172,7 @@ export default function ModernNavigation() {
   const navigate = useNavigate();
   const roleId = getResolvedRoleId();
   const currentNavigation = getMenuItemsByRole(roleId);
+  const { unreadCount } = useVendorNotifications();
   
   const [selectedKeys, setSelectedKeys] = useState(['dashboard']);
   const [openKeys, setOpenKeys] = useState([]);
@@ -287,8 +299,8 @@ export default function ModernNavigation() {
   const desktopMenuSource = shouldUseCollapseLayoutMenu ? navitemcollapse.items : currentNavigation.items;
 
   const menuItems = isMobile
-    ? convertMenuItems(currentNavigation.items)
-    : convertMenuItems(desktopMenuSource);
+    ? convertMenuItems(currentNavigation.items, unreadCount)
+    : convertMenuItems(desktopMenuSource, unreadCount);
 
   return (
     <>
