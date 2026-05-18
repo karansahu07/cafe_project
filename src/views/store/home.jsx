@@ -76,6 +76,12 @@ const mapOrder = (rawOrder) => {
     user?.firstname || rawOrder?.firstname,
     user?.lastname || rawOrder?.lastname
   ].filter(Boolean).join(' ').trim();
+  const firstnameOnly =
+    user?.firstname ||
+    rawOrder?.firstname ||
+    (typeof user?.name === 'string' && user.name.split(' ')[0]) ||
+    (typeof rawOrder?.name === 'string' && rawOrder.name.split(' ')[0]) ||
+    '';
   const addressLine = [
     addressObj?.address || rawOrder?.address,
     addressObj?.floor || rawOrder?.floor,
@@ -85,7 +91,8 @@ const mapOrder = (rawOrder) => {
   return {
     order_id: rawOrder?.order_id || rawOrder?.id || '',
     order_uid: rawOrder?.order_uid || rawOrder?.uid || '',
-    name: fullname || rawOrder?.name || 'Guest',
+    // Prefer first name only on the home orders list (avoid showing only last name)
+    name: (firstnameOnly || fullname) || rawOrder?.name || 'Guest',
     order_status: rawOrder?.order_status ?? null,
     is_fast_delivery: rawOrder?.is_fast_delivery,
     phone: user?.phonenumber || rawOrder?.phonenumber || rawOrder?.phone || '-',
@@ -138,6 +145,8 @@ export default function StoreHome() {
   const [assignRidersError, setAssignRidersError] = useState('');
   const [availableRiders, setAvailableRiders] = useState([]);
   const [assignmentOrder, setAssignmentOrder] = useState(null);
+  const [rejectConfirmOpen, setRejectConfirmOpen] = useState(false);
+  const [orderToReject, setOrderToReject] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -498,14 +507,20 @@ export default function StoreHome() {
     }
   };
 
-  const handleReject = async (order) => {
-    const confirmed = window.confirm('Reject this order?');
-    if (!confirmed) return;
+  const handleReject = (order) => {
+    setOrderToReject(order);
+    setRejectConfirmOpen(true);
+  };
+
+  const confirmReject = async () => {
+    if (!orderToReject) return;
 
     setActionLoading(true);
     try {
-      await updateOrderStatus(order.order_id, 3);
+      await updateOrderStatus(orderToReject.order_id, 3);
       await loadHomeData();
+      setRejectConfirmOpen(false);
+      setOrderToReject(null);
     } catch (err) {
       setError(err?.message || 'Unable to reject order');
     } finally {
@@ -802,6 +817,29 @@ export default function StoreHome() {
           </Button>
           <Button variant="primary" disabled={actionLoading || (selectedOrder && selectedOrder.is_verified)} onClick={submitOtpAndComplete}>
             Verify & Complete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={rejectConfirmOpen} onHide={() => setRejectConfirmOpen(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Reject Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to reject this order? This action cannot be undone.</p>
+          {orderToReject ? (
+            <div className="small">
+              <div><strong>Order ID:</strong> {orderToReject.order_uid || orderToReject.order_id}</div>
+              <div className="text-muted">Customer: {orderToReject.name}</div>
+            </div>
+          ) : null}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setRejectConfirmOpen(false)} disabled={actionLoading}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmReject} disabled={actionLoading}>
+            Reject Order
           </Button>
         </Modal.Footer>
       </Modal>

@@ -9,13 +9,18 @@ export default function StoreNotifications() {
     notifications,
     unreadCount,
     markAsRead,
-    clearNotifications
+    markAllAsRead
   } = useVendorNotifications();
 
-  const orderedNotifications = useMemo(
-    () => notifications.filter((item) => !item?.read),
-    [notifications]
-  );
+  const orderedNotifications = useMemo(() => {
+    // show all notifications, unread first, then newest
+    return (Array.isArray(notifications) ? notifications.slice() : []).sort((a, b) => {
+      if ((a.read ? 1 : 0) !== (b.read ? 1 : 0)) return (a.read ? 1 : -1);
+      const ta = new Date(a.createdAt || 0).getTime();
+      const tb = new Date(b.createdAt || 0).getTime();
+      return tb - ta;
+    });
+  }, [notifications]);
 
   const openNotification = (item) => {
     if (item?.order_id) {
@@ -38,7 +43,7 @@ export default function StoreNotifications() {
         </div>
 
         <div className="d-flex gap-2 mb-3">
-          <Button size="sm" variant="outline-danger" onClick={clearNotifications}>Clear all</Button>
+          <Button size="sm" variant="outline-primary" onClick={markAllAsRead}>Mark all read</Button>
         </div>
 
         {orderedNotifications.length === 0 ? (
@@ -60,9 +65,15 @@ export default function StoreNotifications() {
                   ) : null}
                   <div className="small text-muted">{new Date(item.createdAt || Date.now()).toLocaleString()}</div>
                   <div className="mt-2">
-                    <Button size="sm" variant="outline-primary" onClick={(event) => handleMarkAsRead(event, item)}>
-                      Mark as Read
-                    </Button>
+                    {!item.read ? (
+                      <Button size="sm" variant="outline-primary" onClick={(event) => handleMarkAsRead(event, item)}>
+                        Mark as Read
+                      </Button>
+                    ) : (
+                      <Button size="sm" variant="outline-secondary" disabled>
+                        Read
+                      </Button>
+                    )}
                   </div>
                 </div>
                 {!item.read ? <Badge bg="success">new</Badge> : null}
