@@ -34,6 +34,17 @@ export default function NavRight() {
 
   const latestNotifications = useMemo(() => notifications.slice(0, 8), [notifications]);
 
+  const latestNotificationsSorted = useMemo(() => {
+    return (Array.isArray(notifications) ? notifications.slice() : [])
+      .sort((a, b) => {
+        if ((a.read ? 1 : 0) !== (b.read ? 1 : 0)) return (a.read ? 1 : -1);
+        const ta = new Date(a.createdAt || 0).getTime();
+        const tb = new Date(b.createdAt || 0).getTime();
+        return tb - ta;
+      })
+      .slice(0, 8);
+  }, [notifications]);
+
   const handleNotificationClick = (item) => {
     if (!item?.id) return;
     markAsRead(item.id);
@@ -44,6 +55,17 @@ export default function NavRight() {
     }
 
     navigate('/all-orders');
+  };
+
+  const handleMarkClick = async (event, id) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!id) return;
+    try {
+      await markAsRead(id);
+    } catch (err) {
+      // swallow error for UI; useVendorNotifications logs errors in hook state
+    }
   };
 
   const handleLogout = async () => {
@@ -98,9 +120,8 @@ export default function NavRight() {
           <Dropdown.Menu className="dropdown-menu-end pc-h-dropdown" style={{ width: 360, maxWidth: '90vw' }}>
             <div className="px-3 pt-2 pb-2 d-flex justify-content-between align-items-center">
               <strong>Notifications</strong>
-              <div className="d-flex gap-2">
-                <Button variant="link" size="sm" className="p-0" onClick={markAllAsRead}>Mark read</Button>
-                <Button variant="link" size="sm" className="p-0 text-danger" onClick={clearNotifications}>Clear</Button>
+              <div>
+                <Button variant="link" size="sm" className="p-0" onClick={markAllAsRead}>Mark all read</Button>
               </div>
             </div>
 
@@ -120,10 +141,10 @@ export default function NavRight() {
             ) : null}
 
             <div style={{ maxHeight: 320, overflowY: 'auto' }}>
-              {latestNotifications.length === 0 ? (
+              {latestNotificationsSorted.length === 0 ? (
                 <div className="px-3 py-3 text-muted small">No notifications yet</div>
               ) : (
-                latestNotifications.map((item) => (
+                latestNotificationsSorted.map((item) => (
                   <Dropdown.Item key={item.id} onClick={() => handleNotificationClick(item)} className="notification-item">
                     <div className="d-flex justify-content-between align-items-start gap-2">
                       <div>
@@ -133,6 +154,15 @@ export default function NavRight() {
                           <div className="small text-primary">Order: {item.order_uid || item.order_id}</div>
                         ) : null}
                         <div className="small text-muted">{new Date(item.createdAt || Date.now()).toLocaleString()}</div>
+                        <div className="mt-2">
+                          {!item.read ? (
+                            <Button size="sm" variant="outline-primary" onClick={(e) => handleMarkClick(e, item.id)}>
+                              Mark
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="outline-secondary" disabled>Read</Button>
+                          )}
+                        </div>
                       </div>
                       {!item.read ? <Badge bg="success">new</Badge> : null}
                     </div>

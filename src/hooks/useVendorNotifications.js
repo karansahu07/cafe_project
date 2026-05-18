@@ -276,19 +276,19 @@ export default function useVendorNotifications() {
     bcRef.current = new BroadcastChannel('vendor_notification_channel');
     bcRef.current.onmessage = (event) => {
       const { type, payload } = event?.data || {};
-      if (type === 'new' && payload?.id) {
-        if (!markSeen(payload.id)) return;
-        addNotification(payload);
-      }
-      if (type === 'mark-read' && payload?.id) {
-        removeNotification(payload.id);
-      }
-      if (type === 'mark-all-read') {
-        markAllAsRead();
-      }
-      if (type === 'clear-all') {
-        clearNotifications();
-      }
+        if (type === 'new' && payload?.id) {
+          if (!markSeen(payload.id)) return;
+          addNotification(payload);
+        }
+        if (type === 'mark-read' && payload?.id) {
+          markAsRead(payload.id);
+        }
+        if (type === 'mark-all-read') {
+          markAllAsRead();
+        }
+        if (type === 'clear-all') {
+          clearNotifications();
+        }
     };
 
     return () => {
@@ -297,10 +297,25 @@ export default function useVendorNotifications() {
     };
   }, [addNotification, clearNotifications, isVendor, markAllAsRead]);
 
-  const onMarkAllRead = useCallback(() => {
-    markAllAsRead();
-    bcRef.current?.postMessage({ type: 'mark-all-read' });
-  }, [markAllAsRead]);
+  const onMarkAllRead = useCallback(async () => {
+    try {
+      const unreadIds = (notifications || []).filter((n) => !n.read).map((n) => n.id).filter(Boolean);
+      if (unreadIds.length > 0) {
+        await Promise.all(
+          unreadIds.map((id) =>
+            markNotificationAsReadOnBackend(id, authToken).catch((err) => {
+              console.warn('[onMarkAllRead] mark-as-read failed for', id, err?.message || err);
+            })
+          )
+        );
+      }
+    } catch (err) {
+      console.warn('[onMarkAllRead] Unexpected error', err?.message || err);
+    } finally {
+      markAllAsRead();
+      bcRef.current?.postMessage({ type: 'mark-all-read' });
+    }
+  }, [markAllAsRead, notifications, authToken]);
 
   const onClearAll = useCallback(() => {
     clearNotifications();
@@ -311,12 +326,12 @@ export default function useVendorNotifications() {
     if (!id) return;
     try {
       await markNotificationAsReadOnBackend(id, authToken);
-      removeNotification(id);
+      markAsRead(id);
       bcRef.current?.postMessage({ type: 'mark-read', payload: { id } });
     } catch (err) {
       setError(err?.message || 'Unable to mark notification as read.');
     }
-  }, [authToken, removeNotification]);
+  }, [authToken, markAsRead]);
 
   return useMemo(
     () => ({
