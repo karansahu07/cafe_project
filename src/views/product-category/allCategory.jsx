@@ -1,7 +1,6 @@
 import React from 'react';
-import { Table, Button, Switch, Space, Modal, Form, Input, Upload, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { Table, Button, Switch, Space, Modal, Form, Input, Upload } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import useCatagoryHook from './useCatagoryHook';
 
 const { Dragger } = Upload;
@@ -31,7 +30,6 @@ const AllCategory = () => {
   } = useCatagoryHook();
 
   const [form] = Form.useForm();
-  const navigate = useNavigate();
 
   // When opening edit modal, set form values
   React.useEffect(() => {
@@ -112,9 +110,7 @@ const AllCategory = () => {
     <div className="p2">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h4 style={{ margin: 0 }}>All Product Categories</h4>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/product-category/addCategory')}>
-          Add Category
-        </Button>
+        {/* Add Category button removed as requested */}
       </div>
       <div style={{ marginBottom: 16, maxWidth: 250 }}>
         <Input.Search
