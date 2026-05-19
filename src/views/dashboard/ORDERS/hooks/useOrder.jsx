@@ -12,14 +12,18 @@ export const getOrderStatus = (status) => {
       case 'pending': return { text: 'Pending', color: 'orange' };
       case 'confirmed': return { text: 'Confirmed', color: 'blue' };
       case 'delivery assigned':
-      case 'delivery_assigned': return { text: 'Delivery Assigned', color: 'purple' };
-      case 'order picked up':
-      case 'order_picked_up': return { text: 'Order Picked Up', color: 'cyan' };
+      case 'delivery_assigned':
+      case 'out for delivery':
+      case 'out_for_delivery': return { text: 'Out for delivery', color: 'purple' };
       case 'order delivered':
       case 'order_delivered': return { text: 'Order Delivered', color: 'green' };
       case 'rejected':
       case 'order rejected':
-      case 'order_rejected': return { text: 'Order Rejected', color: 'red' };
+      case 'order_rejected':
+      case 'cancelled':
+      case 'canceled':
+      case 'cancelled_by_vendor':
+      case 'cancelled_by_user': return { text: 'Cancelled', color: 'orange' };
       default: return { text: status, color: 'gray' };
     }
   }
@@ -27,10 +31,10 @@ export const getOrderStatus = (status) => {
   switch (status) {
     case 0: return { text: 'Pending', color: 'orange' };
     case 1: return { text: 'Confirmed', color: 'blue' };
-    case 2: return { text: 'Delivery Assigned', color: 'purple' };
-    case 3: return { text: 'Order Picked Up', color: 'cyan' };
+    case 2: return { text: 'Out for delivery', color: 'purple' };
+    case 3: return { text: 'Cancelled', color: 'orange' };
     case 4: return { text: 'Order Delivered', color: 'green' };
-    case 5: return { text: 'Order Rejected', color: 'red' };
+    case 5: return { text: 'Cancelled', color: 'orange' };
     default: return { text: 'Unknown', color: 'gray' };
   }
 };

@@ -57,14 +57,34 @@ const extractRidersArray = (payload) => {
   return [];
 };
 
+const extractProductsFromResponse = (res) => {
+  if (!res) return [];
+  if (Array.isArray(res)) {
+    // could be array of categories (with .products) or flat products
+    if (res.length > 0 && res[0] && Array.isArray(res[0].products)) {
+      return res.flatMap((c) => Array.isArray(c.products) ? c.products : []);
+    }
+    return res;
+  }
+  if (Array.isArray(res.data)) {
+    if (res.data.length > 0 && res.data[0] && Array.isArray(res.data[0].products)) {
+      return res.data.flatMap((c) => Array.isArray(c.products) ? c.products : []);
+    }
+    return res.data;
+  }
+  if (Array.isArray(res.categories)) return res.categories.flatMap((c) => Array.isArray(c.products) ? c.products : []);
+  if (Array.isArray(res.products)) return res.products;
+  return [];
+};
+
 const getStatusMeta = (status) => {
   if (status == null) return { text: 'Pending', className: 'warning' };
   const value = safeNumber(status, -1);
   if (value === 0) return { text: 'Pending', className: 'warning' };
-  if (value === 1) return { text: 'Confirmed / Assigned', className: 'info' };
-  if (value === 2) return { text: 'Out for Delivery', className: 'primary' };
-  if (value === 3) return { text: 'Rejected', className: 'danger' };
-  if (value === 4) return { text: 'Delivered / Completed', className: 'success' };
+  if (value === 1) return { text: 'Confirmed', className: 'info' };
+  if (value === 2) return { text: 'Out for delivery', className: 'primary' };
+  if (value === 3) return { text: 'Cancelled', className: 'warning' };
+  if (value === 4) return { text: 'Order Delivered', className: 'success' };
   return { text: 'Unknown', className: 'secondary' };
 };
 
@@ -253,13 +273,17 @@ export default function StoreHome() {
   }, []);
 
   const loadHomeData = useCallback(async () => {
-    if (!vendorId || !authToken) return;
+    // If called with silent=true, don't toggle the top-level loading spinner
+    const loadHomeDataImpl = async (silent = false) => {
+      if (!vendorId || !authToken) return;
 
-    setLoading(true);
-    setError('');
+      if (!silent) {
+        setLoading(true);
+        setError('');
+      }
 
-    try {
-      const profileRes = await callApi('/vendors/vendor-profile', {
+      try {
+        const profileRes = await callApi('/vendors/vendor-profile', {
         user_id: vendorId,
         role_id: 3
       });
@@ -298,14 +322,57 @@ export default function StoreHome() {
       const productsRes = await callApi('/products/getallproductsbyvendorID', {
         vendor_id: vendorId
       });
-      const rawProducts = productsRes?.data || productsRes?.products || [];
+      const rawProducts = extractProductsFromResponse(productsRes);
       setProducts(Array.isArray(rawProducts) ? rawProducts : []);
 
-    } catch (err) {
-      setError(err?.message || 'Home data load failed');
-    } finally {
-      setLoading(false);
-    }
+      } catch (err) {
+        if (!silent) setError(err?.message || 'Home data load failed');
+      } finally {
+        if (!silent) setLoading(false);
+      }
+    };
+
+    // Default call
+    return loadHomeDataImpl();
+  }, [authToken, callApi, evaluateStoreStatus, vendorId]);
+
+  // Helper to call loadHomeData silently (no spinner)
+  const loadHomeDataSilent = useCallback(async () => {
+    if (!vendorId || !authToken) return;
+    // reuse implementation but avoid top-level spinner
+    const response = await (async () => {
+      try {
+        // reuse existing call flow by invoking loadHomeData with silent flag
+        // Since loadHomeData returns a promise from inner impl only when called directly,
+        // we replicate minimal logic: call api endpoints similarly but in silent mode by calling the outer function's inner impl would require refactor.
+        // Simpler: call main loader and rely on it to avoid spinner when silent isn't passed; so instead call loadHomeData() and it will show spinner.
+        // To keep changes small, call loadHomeData() but without toggling loading — we will instead call the same API used in loadHomeData directly here.
+        const profileRes = await callApi('/vendors/vendor-profile', { user_id: vendorId, role_id: 3 });
+        const profileData = profileRes?.data || profileRes?.vendor || profileRes?.profile || profileRes;
+        const normalizedProfile = { ...(profileData || {}), address: profileData?.address || profileData?.store_address || profileData?.vendor_address || '' };
+        setStoreProfile(normalizedProfile);
+        evaluateStoreStatus(normalizedProfile);
+
+        let rawOrders = [];
+        try {
+          const ordersRes = await callApi('/order/list', { page: 1, limit: 500, vendor_id: String(vendorId) });
+          rawOrders = extractOrdersArray(ordersRes);
+        } catch {
+          const fallbackOrdersRes = await callApi('/order/getallorderbyvendorid/today', { user_id: vendorId, role_id: 3 });
+          rawOrders = extractOrdersArray(fallbackOrdersRes);
+        }
+
+        const mappedOrders = (Array.isArray(rawOrders) ? rawOrders : []).map(mapOrder);
+        setOrders(mappedOrders);
+
+        const productsRes = await callApi('/products/getallproductsbyvendorID', { vendor_id: vendorId });
+        const rawProducts = extractProductsFromResponse(productsRes);
+        setProducts(Array.isArray(rawProducts) ? rawProducts : []);
+      } catch (err) {
+        // silent failures ignored
+      }
+    })();
+    return response;
   }, [authToken, callApi, evaluateStoreStatus, vendorId]);
 
   useEffect(() => {
@@ -333,8 +400,6 @@ export default function StoreHome() {
     // Join immediately and re-join after reconnect so room subscription is never lost.
     joinVendorRoom();
     socket.on('connect', joinVendorRoom);
-    const pendingRefreshTimers = new Set();
-
     const handleNewOrder = (payload) => {
       console.log('[Home] 📥 New order event received:', payload);
       const orderId = payload?.order_id || payload?.orderId || payload?.id || '';
@@ -349,13 +414,9 @@ export default function StoreHome() {
         order_uid: orderUid,
         createdAt: new Date().toISOString()
       });
-      loadHomeData();
-      const retryTimer = window.setTimeout(() => {
-        loadHomeData();
-        pendingRefreshTimers.delete(retryTimer);
-      }, 1500);
-      pendingRefreshTimers.add(retryTimer);
-      console.log('[Home] ✅ Notification added and home data reloaded');
+      // Refresh silently to avoid blinking spinner/UI flash
+      loadHomeDataSilent();
+      console.log('[Home] ✅ Notification added and home data reloaded (silent)');
     };
 
     socket.on('new_order', handleNewOrder);
@@ -365,10 +426,9 @@ export default function StoreHome() {
       socket.off('connect', joinVendorRoom);
       socket.off('new_order', handleNewOrder);
       socket.off('vendor_new_order', handleNewOrder);
-      pendingRefreshTimers.forEach((timerId) => window.clearTimeout(timerId));
-      pendingRefreshTimers.clear();
     };
-  }, [addNotification, loadHomeData, ready, vendorId]);
+  }, [addNotification, loadHomeData, loadHomeDataSilent, ready, vendorId]);
+  // NOTE: loadHomeDataSilent used inside effect as well; include in deps to satisfy hooks
 
   useEffect(() => {
     if (!ready) return;
@@ -406,6 +466,12 @@ export default function StoreHome() {
     return todayOrders.filter((order) => safeNumber(order.order_status) === 0);
   }, [todayOrders]);
 
+  // Correct totals for tracking details (based on TODAY's orders only)
+  const totalOrdersCount = useMemo(() => (Array.isArray(todayOrders) ? todayOrders.length : 0), [todayOrders]);
+  const completedOrdersCount = useMemo(() => (Array.isArray(todayOrders) ? todayOrders.filter((o) => safeNumber(o.order_status) === 4).length : 0), [todayOrders]);
+  const cancelledOrdersCount = useMemo(() => (Array.isArray(todayOrders) ? todayOrders.filter((o) => safeNumber(o.order_status) === 3).length : 0), [todayOrders]);
+  const productsCount = useMemo(() => (Array.isArray(products) ? products.length : 0), [products]);
+
   const activeOrders = useMemo(() => {
     return activeTab === 'new' ? filteredPrepareOrders : filteredOrderReadyOrders;
   }, [activeTab, filteredOrderReadyOrders, filteredPrepareOrders]);
@@ -433,6 +499,11 @@ export default function StoreHome() {
     },
     [callApi, vendorId]
   );
+
+  // Optimistically update local orders list to avoid waiting for full reload
+  const updateLocalOrderStatus = useCallback((orderId, nextStatus) => {
+    setOrders((prev) => prev.map((o) => (String(o.order_id) === String(orderId) ? { ...o, order_status: nextStatus } : o)));
+  }, []);
 
   const handleAccept = async (order) => {
     setAssignmentOrder(order);
@@ -468,7 +539,9 @@ export default function StoreHome() {
     setActionLoading(true);
     try {
       await updateOrderStatus(assignmentOrder.order_id, 1);
-      await loadHomeData();
+      // optimistic local update and silent refresh
+      updateLocalOrderStatus(assignmentOrder.order_id, 1);
+      await loadHomeDataSilent();
       setAcceptChoiceOpen(false);
       setAssignmentOrder(null);
     } catch (err) {
@@ -497,7 +570,8 @@ export default function StoreHome() {
         order_status: 1,
         assignment_mode: 'manual'
       });
-      await loadHomeData();
+      updateLocalOrderStatus(assignmentOrder.order_id, 1);
+      await loadHomeDataSilent();
       setAssignRiderOpen(false);
       setAssignmentOrder(null);
     } catch (err) {
@@ -518,7 +592,8 @@ export default function StoreHome() {
     setActionLoading(true);
     try {
       await updateOrderStatus(orderToReject.order_id, 3);
-      await loadHomeData();
+      updateLocalOrderStatus(orderToReject.order_id, 3);
+      await loadHomeDataSilent();
       setRejectConfirmOpen(false);
       setOrderToReject(null);
     } catch (err) {
@@ -552,7 +627,9 @@ export default function StoreHome() {
       }, 'POST');
 
       setOtpOpen(false);
-      await loadHomeData();
+      // Optimistically mark order as 'On the way' (status 2) after OTP verified
+      updateLocalOrderStatus(selectedOrder.order_id, 2);
+      await loadHomeDataSilent();
       // Optionally show a toast/notification here
     } catch (err) {
       setError(err?.message || 'Unable to verify OTP');
@@ -679,19 +756,19 @@ export default function StoreHome() {
             </Col>
             <Col md={4} sm={6}>
               <div><strong>Total Orders</strong></div>
-              <div>{storeProfile?.total_orders ?? filteredReceiveOrders.length}</div>
+              <div>{totalOrdersCount}</div>
             </Col>
             <Col md={4} sm={6}>
               <div><strong>Completed Orders</strong></div>
-              <div>{storeProfile?.completed_orders ?? filteredOrderReadyOrders.length}</div>
+              <div>{completedOrdersCount}</div>
             </Col>
             <Col md={4} sm={6}>
               <div><strong>Cancelled Orders</strong></div>
-              <div>{storeProfile?.rejected_orders ?? orders.filter((o) => safeNumber(o.order_status) === 3).length}</div>
+              <div>{cancelledOrdersCount}</div>
             </Col>
             <Col md={4} sm={6}>
               <div><strong>Products</strong></div>
-              <div>{products.length}</div>
+              <div>{productsCount}</div>
             </Col>
           </Row>
         </Card.Body>
@@ -723,7 +800,7 @@ export default function StoreHome() {
             const isNullStatus = order.order_status == null;
             const canAccept = isNullStatus;
             const canReject = isNullStatus;
-            const canReady = status === 0 || status === 1;
+            const canReady = status === 1;
 
             return (
               <Card className="shadow-sm border-0" key={order.order_id}>
