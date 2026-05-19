@@ -112,7 +112,7 @@ const getStatusColor = (status) => {
     'pending': 'warning',
     'inactive': 'secondary',
     'completed': 'info',
-    'cancelled': 'danger'
+    'cancelled': 'orange'
   };
   
   return statusMap[status.toLowerCase()] || 'primary';

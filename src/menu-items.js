@@ -17,6 +17,7 @@ const adminMenuItems = {
       ]
     },
 
+    /*
     // Users Management Group
     {
       id: 'banner-group',
@@ -52,6 +53,7 @@ const adminMenuItems = {
         }
       ]
     },
+    */
 
     // Users Management Group
     {
@@ -84,7 +86,7 @@ const adminMenuItems = {
             //   icon: 'material-icons-two-tone',
             //   iconname: 'people_alt'
             // },
-            {
+            /*{
               id: 'unverified-vendors',
               title: 'All Unverified Vendors',
               type: 'item',
@@ -92,7 +94,7 @@ const adminMenuItems = {
               classes: 'nav-item',
               icon: 'material-icons-two-tone',
               iconname: 'people_alt'
-            },
+            },*/
             {
               id: 'unverified-partners',
               title: 'All Unverified Riders',
@@ -297,6 +299,7 @@ const adminMenuItems = {
         }
       ]
     },
+    /*
     // vendor Group
     {
       id: 'vendor-group',
@@ -323,6 +326,7 @@ const adminMenuItems = {
         }
       ]
     },
+    */
 
     // rider Group
     {
@@ -351,7 +355,7 @@ const adminMenuItems = {
       ]
     },
 
-    {
+    /*{
       id: 'category-div-data',
       type: 'group',
       icon: 'icon-navigation',
@@ -380,7 +384,7 @@ const adminMenuItems = {
           url: '/create-store/step-1'
         }
       ]
-    }
+    }*/
     // Manage Categories Data
     // {
     //   id: 'category-div-data',

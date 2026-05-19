@@ -23,11 +23,17 @@ export default function FeedCard({ wrapclass, title, height, options }) {
                 <i className={`feather icon-${x.icon} ${x.bgclass ? `bg-${x.bgclass}` : 'bg-light-primary'} feed-icon p-2 wid-30 hei-30`} />
               </Col>
               <Col>
-                <Link to={x.link || '#'}>
-                  <h6 className="m-b-5">
+                {x.link && x.link !== '#' ? (
+                  <Link to={x.link}>
+                    <h6 className="m-b-5">
+                      {x.heading} <span className="text-muted float-end f-14">{x.publishon}</span>
+                    </h6>
+                  </Link>
+                ) : (
+                  <h6 className="m-b-5" style={{ cursor: 'default' }}>
                     {x.heading} <span className="text-muted float-end f-14">{x.publishon}</span>
                   </h6>
-                </Link>
+                )}
               </Col>
             </Row>
           ))}
