@@ -1,7 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com/backend';
 const LOCAL_FCM_TOKEN_KEY = 'vendor_fcm_token';
 const LOCAL_FCM_USER_KEY = 'vendor_fcm_user_id';
 const NOTIFICATIONS_PREFIX = '/notifications';

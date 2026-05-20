@@ -23,7 +23,7 @@ export const getOrderStatus = (status) => {
       case 'cancelled':
       case 'canceled':
       case 'cancelled_by_vendor':
-      case 'cancelled_by_user': return { text: 'Cancelled', color: 'orange' };
+      case 'cancelled_by_user': return { text: 'Rejected', color: 'red' };
       default: return { text: status, color: 'gray' };
     }
   }
@@ -32,7 +32,7 @@ export const getOrderStatus = (status) => {
     case 0: return { text: 'Pending', color: 'orange' };
     case 1: return { text: 'Confirmed', color: 'blue' };
     case 2: return { text: 'Out for delivery', color: 'purple' };
-    case 3: return { text: 'Cancelled', color: 'orange' };
+    case 3: return { text: 'Rejected', color: 'red' };
     case 4: return { text: 'Order Delivered', color: 'green' };
     case 5: return { text: 'Cancelled', color: 'orange' };
     default: return { text: 'Unknown', color: 'gray' };
@@ -102,13 +102,52 @@ const useOrder = () => {
         start_date: dateRange.start.format('YYYY-MM-DD'),
         end_date: dateRange.end.format('YYYY-MM-DD')
       };
+      // If user requested Pending (0) we want both null and 0 statuses.
+      // Some backends don't accept a multi-value status filter, so fetch without status and filter client-side.
+      let responseData;
+      if (typeof status === 'number' && Number(status) === 0) {
+        const payloadNoStatus = { ...payload };
+        delete payloadNoStatus.status;
+        const resp = await axios.post(`${API_URL}/order/list`, payloadNoStatus, config);
+        responseData = resp.data;
+      } else {
+        const resp = await axios.post(`${API_URL}/order/list`, payload, config);
+        responseData = resp.data;
+      }
 
-      const { data } = await axios.post(`${API_URL}/order/list`, payload, config);
-      const responseOrders = Array.isArray(data) ? data : (Array.isArray(data?.orders) ? data.orders : []);
-      const sorted = sortOrdersByNewest(responseOrders);
+      const responseOrders = Array.isArray(responseData) ? responseData : (Array.isArray(responseData?.orders) ? responseData.orders : []);
+
+      // Apply client-side filtering for status when needed
+      let filteredByStatus = responseOrders;
+      if (status !== null && typeof status !== 'undefined') {
+        const sNum = Number(status);
+        if (!Number.isNaN(sNum)) {
+          if (sNum === 0) {
+            filteredByStatus = responseOrders.filter((o) => o.order_status == null || Number(o.order_status) === 0);
+          } else {
+            filteredByStatus = responseOrders.filter((o) => Number(o.order_status) === sNum);
+          }
+        }
+      }
+      const sorted = sortOrdersByNewest(filteredByStatus);
+
+      // Determine total count — if we applied client-side filtering (Pending),
+      // use the filtered length so pagination matches client view.
+      const appliedClientSidePending = (typeof status === 'number' && Number(status) === 0);
+      const totalCount = appliedClientSidePending ? filteredByStatus.length : (responseData?.total ?? filteredByStatus.length);
+
+      // If the current page is out of range for the computed total, reset to page 1 so table shows data.
+      const maxPage = Math.max(1, Math.ceil(totalCount / (limit || 1)));
+      if (page > maxPage) {
+        setPage(1);
+        // setOrders to current sorted page (we'll refetch after page changes)
+        setOrders(sorted);
+        setTotal(totalCount);
+        return;
+      }
 
       setOrders(sorted);
-      setTotal(data?.total || sorted.length);
+      setTotal(totalCount);
     } catch (err) {
       setError(err);
       setOrders([]);

@@ -6,7 +6,7 @@ import useNotificationStore from '../../store/useNotificationStore';
 import socket from '../../services/socket';
 import { getHomeRouteFromRoleId } from '../../utils/authSession';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com/backend/';
 
 const safeNumber = (value, fallback = 0) => {
   const n = Number(value);
@@ -83,7 +83,7 @@ const getStatusMeta = (status) => {
   if (value === 0) return { text: 'Pending', className: 'warning' };
   if (value === 1) return { text: 'Confirmed', className: 'info' };
   if (value === 2) return { text: 'Out for delivery', className: 'primary' };
-  if (value === 3) return { text: 'Cancelled', className: 'warning' };
+  if (value === 3) return { text: 'Rejected', className: 'danger' };
   if (value === 4) return { text: 'Order Delivered', className: 'success' };
   return { text: 'Unknown', className: 'secondary' };
 };
@@ -463,7 +463,7 @@ export default function StoreHome() {
   }, [todayOrders]);
 
   const filteredReceiveOrders = useMemo(() => {
-    return todayOrders.filter((order) => safeNumber(order.order_status) === 0);
+    return todayOrders.filter((order) => order.order_status == null || safeNumber(order.order_status) === 0);
   }, [todayOrders]);
 
   // Correct totals for tracking details (based on TODAY's orders only)
@@ -796,11 +796,11 @@ export default function StoreHome() {
       ) : (
         <div className="d-flex flex-column gap-3">
           {searchedOrders.map((order) => {
-            const status = safeNumber(order.order_status, -1);
-            const isNullStatus = order.order_status == null;
-            const canAccept = isNullStatus;
-            const canReject = isNullStatus;
-            const canReady = status === 1;
+                  const status = safeNumber(order.order_status, -1);
+                  const isPendingStatus = order.order_status == null || safeNumber(order.order_status) === 0;
+                  const canAccept = isPendingStatus;
+                  const canReject = isPendingStatus;
+                  const canReady = status === 1;
 
             return (
               <Card className="shadow-sm border-0" key={order.order_id}>

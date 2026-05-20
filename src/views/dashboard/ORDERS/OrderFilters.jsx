@@ -99,7 +99,7 @@ const OrderFilters = ({
             className={styles.statusSelect}
             style={{ minWidth: 180 }}
           >
-            {[0, 1, 2, 3, 4, 5].map(statusCode => {
+            {[0, 1, 2, 3, 4].map(statusCode => {
               const s = getOrderStatus(statusCode)
               return (
                 <Select.Option key={statusCode} value={statusCode}>
@@ -190,7 +190,7 @@ const OrderFilters = ({
             onChange={val => setTempFilters({ ...tempFilters, status: val })}
             style={{ width: '100%' }}
           >
-            {[0, 1, 2, 3, 4, 5].map(statusCode => {
+            {[0, 1, 2, 3, 4].map(statusCode => {
               const s = getOrderStatus(statusCode)
               return (
                 <Select.Option key={statusCode} value={statusCode}>

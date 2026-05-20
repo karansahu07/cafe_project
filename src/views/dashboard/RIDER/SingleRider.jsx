@@ -32,6 +32,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import dayjs from 'dayjs';
 import { getRiderAnalytics, getRiderById } from '../../../services/apiService';
+import api from '../../../services/axiosInstanse';
 import { UserOutlined } from '@ant-design/icons';
 
 const { TabPane } = Tabs;
@@ -63,8 +64,12 @@ const styles = {
   },
   statCard: {
     height: '100%',
-    borderRadius: '8px',
-    boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+    borderRadius: '12px',
+    boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+    padding: '20px',
+    minHeight: 120,
+    display: 'flex',
+    alignItems: 'center'
   },
   chartCard: {
     marginBottom: '24px',
@@ -82,10 +87,10 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '48px',
-    height: '48px',
-    borderRadius: '12px',
-    marginRight: '16px'
+    width: '56px',
+    height: '56px',
+    borderRadius: '14px',
+    marginRight: '18px'
   }
 };
 
@@ -105,6 +110,9 @@ const RiderDashboard = () => {
   const [overviewPreviousTotals, setOverviewPreviousTotals] = useState({ earnings: 0, orders: 0, customers: 0 });
   const [overviewLoading, setOverviewLoading] = useState(false);
   const [overviewData, setOverviewData] = useState([]);
+  const [pointsEarned, setPointsEarned] = useState(0);
+  const [pointsRedeemed, setPointsRedeemed] = useState(0);
+  const [completedDeliveriesCount, setCompletedDeliveriesCount] = useState(0);
   const [datePreset, setDatePreset] = useState('today');
 
   const params = useParams();
@@ -121,8 +129,10 @@ const RiderDashboard = () => {
       setLoading(true);
       try {
         const res = await getRiderById(riderIdNumber);
-        if (res?.success && res?.data) {
-          setRiderData(res.data);
+        // normalize different response shapes from API
+        const normalized = res?.data ?? res?.rider ?? res ?? null;
+        if (normalized && Object.keys(normalized).length > 0) {
+          setRiderData(normalized);
         } else {
           message.error(res?.message || 'Failed to fetch rider');
         }
@@ -135,13 +145,43 @@ const RiderDashboard = () => {
     };
     loadRider();
   }, [riderIdNumber]);
-
-  // Load overview data only once on initial load or when rider changes
+  // Load overview when rider data (including custom_id) is available
   useEffect(() => {
-    if (riderIdNumber) {
+    if (riderData?.custom_id) {
       fetchOverview();
     }
-  }, [riderIdNumber]);
+  }, [riderData?.custom_id]);
+
+  // derive points from riderData when available
+  useEffect(() => {
+    if (riderData) {
+      setPointsEarned(Number(riderData?.points_earned || riderData?.total_points || riderData?.points || 0));
+      setPointsRedeemed(Number(riderData?.points_redeemed || riderData?.redeemed_points || 0));
+    }
+  }, [riderData]);
+
+  // Fetch completed deliveries count (order_status === 4) for this rider by matching rider.custom_id
+  useEffect(() => {
+    let ignore = false;
+    const fetchCompleted = async () => {
+      if (!riderData?.custom_id) return;
+      try {
+        const resp = await api.post('/order/list', { page: 1, limit: 1000 });
+        const raw = resp?.data || resp || {};
+        const allOrders = Array.isArray(raw) ? raw : (Array.isArray(raw?.orders) ? raw.orders : []);
+        const matched = allOrders.filter((o) => {
+          const rCust = o?.rider?.custom_id || o?.rider_custom_id || o?.rider?.rider_id || null;
+          return rCust && String(rCust) === String(riderData.custom_id) && Number(o?.order_status) === 4;
+        });
+        if (!ignore) setCompletedDeliveriesCount(matched.length || 0);
+      } catch (err) {
+        console.error('Failed to fetch completed deliveries for rider by custom_id:', err);
+        if (!ignore) setCompletedDeliveriesCount(0);
+      }
+    };
+    fetchCompleted();
+    return () => { ignore = true; };
+  }, [riderData?.custom_id]);
 
   // Load analytics data when date range changes
   useEffect(() => {
@@ -199,46 +239,34 @@ const RiderDashboard = () => {
 
   const fetchOverview = async () => {
     setOverviewLoading(true);
-    const start = dayjs().startOf('week');
-    const end = dayjs().endOf('week');
-    const res = await getRiderAnalytics(
-      riderIdNumber,
-      start.format('YYYY-MM-DD'),
-      end.format('YYYY-MM-DD')
-    );
-    if (res.success) {
-      const dataArray = Array.isArray(res.data)
-        ? res.data
-        : Array.isArray(res?.data?.data)
-          ? res.data.data
-          : [];
-      const totalsObj = (res.totals ?? res?.data?.totals) || { earnings: 0, orders: 0, customers: 0 };
-      const previousTotalsObj = (res.previousTotals ?? res?.data?.previousTotals) || { earnings: 0, orders: 0, customers: 0 };
+    try {
+      // Fetch all orders and compute totals for this rider by matching rider.custom_id
+      const resp = await api.post('/order/list', { page: 1, limit: 1000 });
+      const raw = resp?.data || resp || {};
+      const allOrders = Array.isArray(raw) ? raw : (Array.isArray(raw?.orders) ? raw.orders : []);
 
-      console.log('Overview API Response:', res);
-      console.log('Overview Totals:', totalsObj);
-      console.log('Overview Previous Totals:', previousTotalsObj);
-      console.log('Overview Data Array:', dataArray);
+      const riderCustomId = riderData?.custom_id || riderData?.custom_id || riderData?.rider_id || null;
+      const matched = allOrders.filter((o) => {
+        const rCust = o?.rider?.custom_id || o?.rider_custom_id || o?.rider?.rider_id || null;
+        return rCust && riderCustomId && String(rCust) === String(riderCustomId) && Number(o?.order_status) === 4;
+      });
 
-      setOverviewData(dataArray);
-      setOverviewTotals({
-        earnings: Number(totalsObj.earnings || 0),
-        orders: Number(totalsObj.orders || 0),
-        customers: Number(totalsObj.customers || 0),
-      });
-      setOverviewPreviousTotals({
-        earnings: Number(previousTotalsObj.earnings || 0),
-        orders: Number(previousTotalsObj.orders || 0),
-        customers: Number(previousTotalsObj.customers || 0),
-      });
-    } else {
-      console.error('Failed to load overview data:', res);
-      message.error(res.error?.message || 'Failed to load overview data');
+      const earningsSum = matched.reduce((s, o) => s + Number(o?.total_price ?? o?.price ?? 0), 0);
+      const ordersCount = matched.length;
+      const customersCount = new Set(matched.map((o) => o?.user_id || o?.user?.id || o?.user?.user_id)).size;
+
+      setOverviewData(matched);
+      setOverviewTotals({ earnings: Number(earningsSum || 0), orders: Number(ordersCount || 0), customers: Number(customersCount || 0) });
+      setOverviewPreviousTotals({ earnings: 0, orders: 0, customers: 0 });
+    } catch (err) {
+      console.error('Failed to load overview data via order list:', err);
+      message.error('Failed to load overview data');
       setOverviewData([]);
       setOverviewTotals({ earnings: 0, orders: 0, customers: 0 });
       setOverviewPreviousTotals({ earnings: 0, orders: 0, customers: 0 });
+    } finally {
+      setOverviewLoading(false);
     }
-    setOverviewLoading(false);
   };
 
   // Data processing functions
@@ -362,29 +390,26 @@ const RiderDashboard = () => {
   };
 
   // Stat Card Component
-  const StatCard = ({ title, value, icon, trend, trendValue, color = THEME.primary, suffix = "" }) => {
+  const StatCard = ({ title, value, icon, color = THEME.primary, suffix = "", isCurrency = true }) => {
     return (
       <Card style={styles.statCard}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ ...styles.iconWrapper, backgroundColor: `${color}15` }}>
+          <div style={{ ...styles.iconWrapper, backgroundColor: `${color}15`, flexShrink: 0 }}>
             {icon}
           </div>
-          <div>
-            <Text type="secondary">{title}</Text>
-            <Title level={4} style={{ margin: 0 }}>
-              {/* If value is number, show rupee icon, else show as is */}
-              {typeof value === 'number' ? <span style={{fontFamily:'inherit'}}>&#8377;{Number(value || 0).toLocaleString('en-IN')}</span> : value}{suffix}
-              {trend && (
-                <span style={{ 
-                  fontSize: '14px', 
-                  marginLeft: '8px',
-                  color: trend === 'up' ? THEME.success : trend === 'down' ? THEME.danger : THEME.textSecondary 
-                }}>
-                  {trend === 'up' ? <TrendingUp size={14} /> : trend === 'down' ? <TrendingDown size={14} /> : null}
-                  {trendValue}
-                </span>
-              )}
-            </Title>
+          <div style={{ flex: 1 }}>
+            <Text type="secondary" style={{ display: 'block', marginBottom: 6 }}>{title}</Text>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 600 }}>
+                  {isCurrency && typeof value === 'number' ? (
+                    <span style={{fontFamily:'inherit'}}>&#8377;{Number(value || 0).toLocaleString('en-IN')}</span>
+                  ) : (
+                    <span>{value}</span>
+                  )}{suffix}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </Card>
@@ -456,49 +481,48 @@ const RiderDashboard = () => {
         <Tabs activeKey={activeTab} onChange={setActiveTab} tabBarStyle={{backgroundColor:"white",paddingLeft:10}} size="large">
           {/* Overview Tab */}
           <TabPane tab={<span><Eye size={16} /> Overview</span>} key="1">
-      <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]}>
               <Col xs={24} sm={12} md={6}>
                 <StatCard
-                  title="Total Earnings"
-                  value={Number(overviewTotals.earnings || 0)}
-                  icon={<DollarSign size={16} />}
-                  trend={calculateTrend(overviewTotals.earnings, overviewPreviousTotals.earnings).trend}
-                  trendValue={calculateTrend(overviewTotals.earnings, overviewPreviousTotals.earnings).percentText}
+                  title="Total Points Earn"
+                  value={String(pointsEarned || 0)}
+                  icon={<Award size={16} />}
                   color={THEME.primary}
+                  isCurrency={false}
+                />
+              </Col>
+              <Col xs={24} sm={12} md={6}>
+                <StatCard
+                  title="Redeemed Points"
+                  value={String(pointsRedeemed || 0)}
+                  icon={<Award size={16} />}
+                  color={THEME.primary}
+                  isCurrency={false}
                 />
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <StatCard
                   title="Total Deliveries"
-                  value={formatNumber(overviewTotals.orders)}
+                  value={completedDeliveriesCount}
                   icon={<ShoppingCart size={16} />}
-                  trend={calculateTrend(overviewTotals.orders, overviewPreviousTotals.orders).trend}
-                  trendValue={calculateTrend(overviewTotals.orders, overviewPreviousTotals.orders).percentText}
                   color={THEME.primary}
-                />
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <StatCard
-                  title="Total Customers"
-                  value={formatNumber(overviewTotals.customers)}
-                  icon={<Truck size={16} />}
-                  trend={calculateTrend(overviewTotals.customers, overviewPreviousTotals.customers).trend}
-                  trendValue={calculateTrend(overviewTotals.customers, overviewPreviousTotals.customers).percentText}
-                  color={THEME.primary}
+                  isCurrency={false}
                 />
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <StatCard
                   title="Customer Rating"
-                  value={4.8}
+                  value={getAverageRating() || 4.8}
                   icon={<Star size={16} />}
                   trend="neutral"
                   trendValue="Stable"
                   color={THEME.warning}
+                  isCurrency={false}
                 />
               </Col>
             </Row>
 
+            {/* Charts removed per request: Weekly Earnings Trend and Delivery Categories
             <Row gutter={[16, 16]} className="mt-4">
               <Col xs={24} lg={12}>
                 <Card title="Weekly Earnings Trend" className="h-100">
@@ -510,32 +534,33 @@ const RiderDashboard = () => {
                       <Tooltip />
                       <Area type="monotone" dataKey="earnings" stroke={THEME.primary} fill={THEME.primary} fillOpacity={0.15} />
                     </AreaChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
+                  </ResponsiveContainer>
+                </Card>
+              </Col>
 
               <Col xs={24} lg={12}>
                 <Card title="Delivery Categories" className="h-100">
                   <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
+                    <PieChart>
+                      <Pie
                         data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
                         {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </Card>
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </Card>
               </Col>
             </Row>
+            */}
           </TabPane>
 
           {/* Rider Details Tab */}
@@ -698,101 +723,7 @@ const RiderDashboard = () => {
             </Row>
           </TabPane>
 
-          {/* Analytics Tab */}
-          <TabPane tab={<span><BarChart2 size={16} /> Analytics</span>} key="3">
-            <Row gutter={[16, 16]} className="mb-4">
-              <Col xs={24}>
-                <Card>
-                  <div className="d-flex align-items-center justify-content-between flex-md-row flex-column">
-                    <h4 className="mb-0">Analytics</h4>
-                    <div className="d-flex align-items-center" style={{ gap: 12 }}>
-                      <DateRangeSelector
-                        preset={datePreset}
-                        start={tempStart}
-                        end={tempEnd}
-                        onChange={({ preset, start, end }) => {
-                          setDatePreset(preset);
-                          setTempStart(start);
-                          setTempEnd(end);
-                          setSelectedStart(start);
-                          setSelectedEnd(end);
-                          // fetchAnalytics will be called by useEffect
-                        }}
-                      />
-                    </div>
-              </div>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={8}>
-                <StatCard
-                  title="Total Earnings"
-                  value={Number(analyticsTotals.earnings || 0)}
-                  icon={<DollarSign size={20} />}
-                  trend={calculateTrend(analyticsTotals.earnings, rangePreviousTotals.earnings).trend}
-                  trendValue={calculateTrend(analyticsTotals.earnings, rangePreviousTotals.earnings).percentText}
-                />
-              </Col>
-              <Col xs={24} md={8}>
-                <StatCard
-                  title="Total Deliveries"
-                  value={formatNumber(analyticsTotals.orders)}
-                  icon={<ShoppingCart size={20} />}
-                  trend={calculateTrend(analyticsTotals.orders, rangePreviousTotals.orders).trend}
-                  trendValue={calculateTrend(analyticsTotals.orders, rangePreviousTotals.orders).percentText}
-                />
-              </Col>
-              <Col xs={24} md={8}>
-                <StatCard
-                  title="Total Customers"
-                  value={formatNumber(analyticsTotals.customers)}
-                  icon={<Truck size={20} />}
-                  trend={calculateTrend(analyticsTotals.customers, rangePreviousTotals.customers).trend}
-                  trendValue={calculateTrend(analyticsTotals.customers, rangePreviousTotals.customers).percentText}
-                />
-              </Col>
-            </Row>
-
-            <Row gutter={[16, 16]} className="mt-4">
-              <Col xs={24} lg={12}>
-                <Card title="Earnings Trend" className="h-100">
-                  <ResponsiveContainer width="100%" height={350}>
-                    <AreaChart data={mappedRangeData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="label" />
-                      <YAxis />
-                      <Tooltip />
-                      <Area type="monotone" dataKey={'earnings'} stroke={THEME.primary} fill={THEME.primary} fillOpacity={0.15} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </Card>
-              </Col>
-
-              <Col xs={24} lg={12}>
-                <Card title="Orders & Deliveries" className="h-100">
-                  <ResponsiveContainer width="100%" height={350}>
-                    <BarChart data={mappedRangeData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="label" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="orders" fill={THEME.primary} />
-                      <Bar dataKey="customers" fill={THEME.warning} />
-                    </BarChart>
-                  </ResponsiveContainer>
-          </Card>
-        </Col>
-      </Row>
-
-            {rangeLoading && (
-              <div className="d-flex justify-content-center align-items-center mt-3 mb-3">
-                <Spin size="small" />
-                <span className="ms-2">Loading...</span>
-              </div>
-            )}
-          </TabPane>
+          {/* Analytics Tab removed per request */}
         </Tabs>
       </div>
     </div>

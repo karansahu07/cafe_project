@@ -482,6 +482,14 @@ const storeAdminMenuItems = {
           url: '/all-orders'
         },
         {
+          id: 'store-riders',
+          title: 'Riders',
+          type: 'item',
+          icon: 'material-icons-two-tone',
+          iconname: 'two_wheeler',
+          url: '/riders'
+        },
+        {
           id: 'store-notifications',
           title: 'Notifications',
           type: 'item',
