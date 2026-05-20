@@ -1,12 +1,9 @@
 import { getResolvedUserId, getResolvedVendorId } from '../../../utils/authSession';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com/backend/';
 
 const getAuthToken = () =>
-  localStorage.getItem('token') ||
-  localStorage.getItem('user_token') ||
-  localStorage.getItem('vendor_ini_token') ||
-  '';
+  localStorage.getItem('token') || localStorage.getItem('user_token') || localStorage.getItem('vendor_ini_token') || '';
 
 export const getVendorUserId = () => {
   return getResolvedUserId() || getResolvedVendorId() || localStorage.getItem('user_id') || '';
@@ -114,11 +111,15 @@ export const updateVendorProfilePicture = async (file) => {
 
 export const changeVendorPassword = async (oldPassword, newPassword) => {
   const userId = getVendorUserId();
-  return callVendorJson('/vendors/change-vendorPwd', {
-    user_id: Number(userId),
-    old_password: oldPassword,
-    new_password: newPassword
-  }, 'PUT');
+  return callVendorJson(
+    '/vendors/change-vendorPwd',
+    {
+      user_id: Number(userId),
+      old_password: oldPassword,
+      new_password: newPassword
+    },
+    'PUT'
+  );
 };
 
 export const updateShopProfileData = async (payload, file) => {
@@ -140,34 +141,46 @@ export const updateShopProfileData = async (payload, file) => {
 
 export const updateShopStatusData = async (status, startTime, closeTime) => {
   const userId = getVendorUserId();
-  return callVendorJson('/vendors/vendor-status', {
-    user_id: Number(userId),
-    role_id: 3,
-    status: Number(status),
-    start_time: startTime,
-    close_time: closeTime
-  }, 'POST');
+  return callVendorJson(
+    '/vendors/vendor-status',
+    {
+      user_id: Number(userId),
+      role_id: 3,
+      status: Number(status),
+      start_time: startTime,
+      close_time: closeTime
+    },
+    'POST'
+  );
 };
 
 export const loadBankDetails = async () => {
   const userId = getVendorUserId();
-  const res = await callVendorJson('/vendors/vendor-bankdetails', {
-    user_id: Number(userId),
-    role_id: 3
-  }, 'POST');
+  const res = await callVendorJson(
+    '/vendors/vendor-bankdetails',
+    {
+      user_id: Number(userId),
+      role_id: 3
+    },
+    'POST'
+  );
 
   return res?.data || {};
 };
 
 export const saveBankDetails = async (bankData) => {
   const userId = getVendorUserId();
-  return callVendorJson('/vendors/store-bank-details', {
-    user_id: Number(userId),
-    role_id: 3,
-    bank_name: bankData?.bank_name || '',
-    account_holder_name: bankData?.account_holder_name || '',
-    transit_number: bankData?.transit_number || '',
-    institution_number: bankData?.institution_number || '',
-    account_number: bankData?.account_number || ''
-  }, 'POST');
+  return callVendorJson(
+    '/vendors/store-bank-details',
+    {
+      user_id: Number(userId),
+      role_id: 3,
+      bank_name: bankData?.bank_name || '',
+      account_holder_name: bankData?.account_holder_name || '',
+      transit_number: bankData?.transit_number || '',
+      institution_number: bankData?.institution_number || '',
+      account_number: bankData?.account_number || ''
+    },
+    'POST'
+  );
 };

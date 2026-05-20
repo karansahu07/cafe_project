@@ -1,12 +1,10 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-import { getRolebyid } from "../services/utils/role_manager";
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+import { getRolebyid } from '../services/utils/role_manager';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zcafe.ekarigar.com/backend';
 const API_PREFIX = (import.meta.env.VITE_API_PREFIX || '').replace(/\/$/, '');
-const SOCKET_API_PREFIX = (import.meta.env.VITE_SOCKET_PATH || '')
-  .replace(/\/socket\.io\/?$/, '')
-  .replace(/\/$/, '');
+const SOCKET_API_PREFIX = (import.meta.env.VITE_SOCKET_PATH || '').replace(/\/socket\.io\/?$/, '').replace(/\/$/, '');
 const NOTIFICATIONS_PREFIX = '/notifications';
 
 const buildCandidateUrls = (path) => {
@@ -63,22 +61,22 @@ const cleanupFcmTokenOnLogout = () => {
 
 const useAuth = create(
   devtools((set, get) => ({
-    token: localStorage.getItem("token") || null,
+    token: localStorage.getItem('token') || null,
     user: null, // only in memory
 
     // 🔹 Login function
     login: (token, user) => {
-      localStorage.setItem("token", token); // only token persist
-      set({ token, user }, false, "auth/login"); // name for devtools
+      localStorage.setItem('token', token); // only token persist
+      set({ token, user }, false, 'auth/login'); // name for devtools
     },
 
     // 🔹 Logout function
     logout: () => {
       cleanupFcmTokenOnLogout();
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
       localStorage.removeItem('vendor_fcm_token');
       localStorage.removeItem('vendor_fcm_user_id');
-      set({ token: null, user: null }, false, "auth/logout");
+      set({ token: null, user: null }, false, 'auth/logout');
     },
 
     // 🔹 Get token
@@ -88,7 +86,7 @@ const useAuth = create(
     getRole: () => getRolebyid(get().user?.role_id) || null,
 
     // 🔹 Get user
-    getUser: () => get().user,
+    getUser: () => get().user
   }))
 );
 

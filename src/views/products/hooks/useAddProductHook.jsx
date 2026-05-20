@@ -42,7 +42,8 @@ export default function useAddProductHook(form,data) {
 
 
   useEffect(() => {
-    getAllCategories().then((response) => {
+    // Send resolved role id so backend receives `role_id` from vendor or superadmin
+    getAllCategories(resolvedRoleId).then((response) => {
       if (response.success) setCategories(response.data);
     });
     productfetchBrands().then((response) => {

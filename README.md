@@ -134,7 +134,7 @@ FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 FIREBASE_APP_ID=your_app_id
 FIREBASE_VAPID_KEY=your_web_push_vapid_key
-VITE_API_URL=https://zcafe.ekarigar.com
+VITE_API_URL=https://zcafe.ekarigar.com/backend/
 ```
 
 Note:
